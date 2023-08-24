@@ -1,0 +1,52 @@
+use sakila;
+select database();
+select * from sakila.actor;
+-- sakila ki actor table
+select name from sakila.language;
+-- sakila me language vala colomn
+select * from language where name = "english";
+-- yadi data match kre to output aayga otherwise nhi isse jisme language english ho uska data milega
+select * from language where language_id >3;
+-- 3 se bdi language id aaygi
+select * from language where language_id >'E';
+-- E se bdi language id aaygi
+select * from language where language_id <>3;
+-- 3 k alava sari milegi 3 nhi milegi
+select * from language where language_id !=3;
+-- 3 k alava sari milegi 3 nhi milegi
+select * from language where language_id >'En';
+-- yha se E se bde sare word aayge uske bad e k aage yadi n se bde h to vo hi aayge n vali bhi tbhi aaygi jb en k bad bhi kch likha ho
+select first_name from actor where first_name >'b';
+-- yha se vo milega jiska frstname b se bda ho
+select * from film;
+-- film table ko select kiya
+select * from film where title like '%';
+-- % ka mtlb h 0 or usse jyada charector jiska title name me 0 or usse jyada charactor ho uska data milega
+select * from film where title like 'A%';
+-- A se start hone vali movie A k bad kitne bhi char ho ya na ho
+select * from film where title like 'A%R';
+-- A se start hone vali or R pr khtm hone vali movie
+select * from film where title like '%DINOSAUR';
+-- end me dianosaur aane vala movie
+select * from film where title like '%DINOSAUR%';
+-- first ya last pr ya bich me khi bhi dianosaur aa skta h
+select * from film where description like '%drama%'; 
+-- jiske description me khi bhi drama likha ho
+select * from film where title like 'A_';
+-- esi movie jisme title me only 2 word ho esi koi h hi nhi start word a hoga
+select * from film where title like 'A_%';
+-- minimum 2 char ho jese a first ho uske bad 2 nd kch bhi ho skta h or 2 k bad bhi kch aa skta h or nhi bhi
+select * from film where title like 'A_E%';
+-- frst char A h 2 kch bhi ho skta h 3 E hoga E k bad kitne bhi ho skte h or nhi bhi
+select title, description, release_year from film where description like 'a%les';
+-- jiska description a se start or les pr end ho uska title description release_year btana
+select film_id, title, description, release_year from film where title like '_c%';
+-- jiska title me 2nd charactor c ho uska film id title description release_year dekhna
+select film_id, title, description, release_year from film where title like 'a%an';
+-- jiska title me 1st char A ho or last char AN ho uska film id title description release_year dekhna
+select film_id, title, description, release_year from film where title like '%t___';
+-- jiska title me last se 4th char T ho or minimum 4 char ho uska film id title description release_year dekhna
+select film_id, title, description, release_year from film where title like '_F_I%egg';
+-- jiska title me 2nd char F ho 4th char I ho or last me egg ho uska film id title description release_year dekhna
+select film_id, title, description, release_year from film where title like '%__a__%';
+-- jiska title me minimun 5 char ho or 3rd char A ho uska film id title description release_year dekhna
