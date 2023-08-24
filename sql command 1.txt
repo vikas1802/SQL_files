@@ -1,0 +1,39 @@
+use sakila;
+-- sakila databse ka use krna
+show tables;
+-- sakila database me tables dekhna
+describe actor;
+-- sakila database ki actor table k structure ko dekhna
+desc actor;
+-- sakila database ki actor table k structure ko dekhna describe ki jgh desc bhi likh skte h
+select * from actor;
+-- dql statement yha se actor table ka pura content dekhte h
+select actor_id from actor;
+-- yha se actor table k andar actor id milegi
+select actor_id, first_name from actor;
+-- yha se actor table k andar actor id k first name milege
+desc actor_info;
+-- agr nyi table dekhni ho to sakila databse ki actor_info table k structure ko dekhna
+-- projection and selection
+-- projection = coloum select krna
+-- selection = row select krna
+select * from actor_info;
+-- yha se actor_info table ka pura content dekhte h
+select actor_id, actor_id*2 from actor_info;
+-- kisi particular colom ko select krke usme colom ko modify krna isse origional data me changes nhi hote h
+select * from actor_info where actor_id = 2;
+-- actor_info table ka vo data jiski actorid 2 ho
+select actor_id, first_name from actor_info where actor_id = 2;
+-- actor_info table ka vo data jiski actorid 2 ho uska actor id or uska firstname find krna
+select actor_id, first_name from actor_info where actor_id>6;
+-- actor_info table ka vo data jiski actorid 6 se jyada ho uska actor id or uska firstname find krna
+select first_name from actor_info where actor_id>7;
+-- actor_info table ka vo data jiski actorid 7 se jyada ho uska firstname find krna
+select * from actor_info where first_name = "ED";
+-- actor_info table ka vo data jisme firstname ed ho
+use firstproject;
+-- firstproject database ko use krna
+show tables;
+-- firstproject database k andar tables ko dekhna
+select * from family;
+-- firstproject database k family table ka pura content dekhna
