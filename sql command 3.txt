@@ -1,0 +1,61 @@
+use sakila;
+-- sakila database ka use krna
+show tables;
+-- sakila database ki tabels ko dekhna
+-- logical operators = and, or , not
+select * from actor;
+-- actor table dekhna
+select * from actor where first_name = "NICK";
+-- jiska firstname nick ho to output milega
+select * from actor where first_name = "NICK" and actor_id="2";
+-- jiska firstname nick ho ya actor id  ho dono shi ho to output milega
+select * from actor where first_name = "NICK" and actor_id="212";
+-- kch nh aayga kuki actod id 212 nhi h isme dono true hone chaiye
+select * from actor where first_name = "NICK" or actor_id="3";
+-- jiska firstname nick ho ya actor id 3 ho dono me se koi sa bhi ek shi ho ya dono shi ho to output milega
+select * from actor_info where film_info like "Animation%" and first_name = "GOLDIE";
+-- actor info table me se vo data jisme film info me starting me animation likha aaye bad me kch bhi aaye ya na aaye or uska first name goldie hi ho
+select * from actor_info where film_info like "Animation%" and first_name = "GOLDIE" or first_name = "NICK";
+-- actor info table me se vo data jisme film info me starting me animation likha aaye bad me kch bhi aaye ya na aaye or uska first name goldie ho ya firstname nick dono me se koi bhi ho ya dono shi ho isme sbse phle and vali condition chlegi uska jo output aayga vo or k sath chlega
+select * from actor_info where film_info like "Animation%" or first_name = "GOLDIE" and first_name = "NICK";
+-- yha only vo hi data milega jiska film info animation ho kuki first name me nick or goldie ek sth nhi milte h isliye only or condition chlegi
+select category, rating, title from film_list where category like "sci-Fi" and rating like "PG";
+-- film_list table ki cateegory rating title milega jiski category sci-fi ho or rating pg ho
+select category, rating, title from film_list where category like "sci-Fi" or category like "Family" and rating like "PG";
+-- yha se vo data milega jiski category sci-fi ho uski rating pg or non pg dono milegi or jiski category family ho uski  rating only pg milegi kuki sbse phle and solve hoga to vo movie milegi jiska category family ho or rating pg ho iske bad vo output milega jiski category scifi ho use rating se mtlb nhi h kuki vo phle solve ho chuka h
+select category, rating, title from film_list where (category like "sci-Fi" or category like "Family") and rating like "PG";
+-- yha hmne priority set krdi h ab only vo hi movie milegi jiski category ya to sci fi ho ya family ho pr unki rating hmesa pg honi hi chaiye
+-- airthmatic operation
+select 2+2*3;
+-- output 8 aayga kuki sbse phle multipal solve hoga
+select (2+2)*3;
+-- output 12 aayga kuki sbse phle paranthisis solve hoga
+select * from actor where actor_id between 2 and 5;
+-- yha se vo data milega jiski actor id 2 se 5 k bich h isme 2 or 5 bhi mix h
+select * from actor where actor_id between 5 and 2;
+-- isme koi data nhi aayga kuki 5 se 2 ki or koi data nhi aata h  kuki phle 2 aata h
+select * from actor where first_name between "B" and "D";
+-- yha se B se start or D ki vhi milega jisme only D ho D k aage kch bhi likha ho to only c tk ka data millega ya jiska first_name only D ho vo milega is karan isme D s start hone vala data nhib aata h
+select * from actor where first_name between "B" and "De";
+-- yha se B se leke D me De tk ka data aayga isme d or de tk ka data aayga mtlb D s start hone vale sara  data aa jayge
+select * from actor where actor_id in (1,5);
+-- isme actor id ya to 1 ho ya 5 ho vhi milegi 
+select * from actor where actor_id =1 or actor_id = 5;
+-- isme actor id ya to 1 ho ya 5 ho vhi milegi 
+select * from actor where not(actor_id=1);
+-- jiski actorid 1 nhi ho vo data milega
+select * from actor where actor_id!=1;
+-- jiski actorid 1 nhi ho vo data milega
+select * from actor where first_name >"D";
+-- D se bde sbhi data aa jayge pr D ka nhi aayga yadi D k aage kch likha ho to aa jayga
+select * from actor where actor_id between 2 and 7 and (first_name = "NICK" or first_name = "ed");
+-- yha se vo data milega jiski actor_id 2 se 7 k bich me ho or uska firstname ya to nick ho ya ed ho yha sbse phle () solve hoge mtlb phle ed or nick vala sara data aayga fir vo actor id se compare hoga
+select * from actor where not(last_name like "%a%e%"); 
+-- yha se last name me khi bhi a ya e ek sath nhi aayge mtlb pure name m ya to a aayga ya e aayga ya dono nhi aayge
+select * from actor where not(last_name = "%a%e%");
+-- yha se last name me a or e aa to skte h pr ek sath nhi aa skte alg alg jgh aa skte h
+select * from actor where not(first_name = "grase" or first_name = "matthew" or first_name = "joe") and actor_id < 15;
+-- yha se firstname me grase matthew or joe na ho or actor id 15 se kam ho
+select * from actor where not (first_name like "%i%" or last_name like "%a%") and actor_id between 10 and 20;
+-- yha se first name me i or last name me a nhi aana chaiye or actor id 10 se 20 k bich honi chaiye
+ 
