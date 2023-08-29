@@ -1,0 +1,69 @@
+select * from sakila.city;
+-- yha se hm use database nhi krke is trh s direct table dekh skte h yha s sakila database me city vali table mili h 
+select * from sakila.city_id;
+-- yha se error aayga kuki hm sakila database me city table k city_id vale column ko dekhna chahte h jbki yha s only table show hoti h
+select * from sakila.city  where (city_id = 3 or city_id = 4) and country_id = 60;
+-- jiski city id ya to 3 ho ya 4 ho kch bhi ho ya dono bhi ho skti h but country id 60 honi hi chaiye
+select * from sakila.city  where city_id = 3 or city_id = 4 and country_id = 60;
+-- yha sbse phle and condition chlegi mtlb jiski city_id 4 or country_id 60 ho or uske bad city_id 3 ho or uski country_id kch bhi ho koi frk nhi pdta
+select * from sakila.city  where city_id = 3 or city_id = 4 and country_id = 60;
+-- yha end condition satisfy nhi hogi isliye vo fir or conditon ko cheak krega or value print krega
+select * from sakila.city  where city_id = 6 or city_id = 4 and country_id = 101;
+-- yha end condition satisfy nhi hogi isliye vo fir or conditon ko cheak krega or value print krega
+select * from sakila.actor where actor_id = 1;
+-- yha se sakila database ki actor table ka vo data show hoga jiska actor_id = 1 hoga 
+select * from sakila.actor where not(actor_id = 1);
+-- yha se sakila database ki actor table ka vo data show hoga jiska actor_id = 1 nhi hoga
+select fid, title from sakila.film_list where fid<7 and (fid !=4 or fid!=6);
+-- yha se and conditon phle cheak hogi uske bad ye 7 se choti fid ko hi print krta h
+select FID, title from sakila.film_list where FID<7 and not (FID =4 or FID=6);
+-- yha se vo data milega jiski fid 7 se km h or fid 4 or 6 nhi h
+select fid, title from sakila.film_list where fid<7 and (fid =4 or fid=6);
+-- yha se vo data milega jiski fid 7 se km h or fid 4 or 6 h
+-- -- agr  like operator use krte h (mtlb pattern find krte h to)to start me %use nhi krte h kuki isse sara data traverse ho jata h
+use sakila;
+-- sakila database ko use krna
+-- -- order by clause => sort accending or decending
+select * from film_list order by category;
+-- -- yha se category accendinng order me milti h
+select * from film_list order by  category desc;
+-- -- yha se category decendinng milti h
+select * from film_list order by 4;
+-- yha se order by k bad diya gya number us table k coloum ko select krta h or us colom ko accending order me set krta h yha 4 number pe category h mtlb category accending set hui h
+select fid, title from film_list order by 3;
+-- -- yha s error aaygi kuki hmne fid  or title select kra h unka colom number 1 or 2 hi h 3 number pr desecription h uska data sort nhi hoga kuki hmne number diya h
+select fid, title from film_list order by 2;
+-- -- yha s hmne fid  or title select kra h title colom number pr 2 hi h mtlb title accending set hoga
+select fid, title from film_list order by price;
+-- -- yha s error nhi aaygi kuki hmne fid  or title select kra h data to inka hi show hoga pr colom name dene s price sort ho jati h vo hme show nhi hoti h
+-- -- agr kisi data ko sort kre usme null value h to vo sbse phle show hoti h
+select district, address, address_id from address order by district;
+-- -- yha se district sort hogi
+select district, address, address_id from address order by district, address_id;
+-- -- yha se district  or uske bad address id accending order me sort hoga
+select district, address, address_id from address order by district, address_id desc;
+-- -- yha se district accending me or adress_id desc sort hoga
+select district, address, address_id from address order by district desc, address_id asc;
+-- -- yha se sbse phle district descending me set hogi fir uske according address_id accending order me set hoti h
+select * from address;
+-- -- yha se sara address table ka data show hota h
+select * from address limit 3;
+-- -- yha se sbhi colom ka 3 tk ka hi data show hoga
+select address_id, address from address limit 3;
+-- -- only address_id or address milega vo bhi 3 tk
+select address_id, address from address limit 3, 2;
+-- -- ise off set khte h yha se 1 2 3 vali data show nhi hoga or uske bad ka 2 tk mtlb 4 or 5 number ka data show hoga
+select address_id, address from address limit 5, 5;
+-- -- yha se first 5 skip hoge uske bad 6 s 10 tk milege
+select address_id, address from address limit 3 offset 2;
+-- offset keyword bhi use kr skte h offset k bad jo number likha h utni value skip krega or usse phle jitne number likhe ho uski value dega mtlb yha 1 or 2 skip hoge or 3 4 5 vale data ki value milegi
+select 2+2 from dual;
+-- -- dual table esi dummy table hoti h jisme ek row ek colom hoti h uske hm logic cheak kr skte h uska result bhi hme vhi milega jese yha 4 milega
+select now() from dual;
+-- -- yha now() method s present time or date milti h
+select now();
+-- -- yha now() method s present time or date milti h jruri nhi h hm dual table ka name hi likhe
+-- -- psudo colom ka ek sspecific mean hota h jo user k system k sth available hoti h
+-- -- contact method = 2 colom ko add krna
+-- -- contact_ws method = 2 se jyada colom ko add krna
+-- -- substr method = ek string me se uske words nikalna
