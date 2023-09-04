@@ -1,0 +1,23 @@
+
+use sakila;
+select * from language;
+-- sakila database ki language table ko select krna
+select count(*)from language;
+-- yha se language k andar kitne data h use count krna
+desc language;
+-- yha se language k datatype milege column k
+-- dml = crud = create, retreve(select), update, delete
+-- insert statement = insert into table_name values(val1, val2);
+select * from language;
+insert into language values(null, "portuguese", NOW());
+-- yha se null dalne pr or 4 bar chlane pr 7 8 9 10 number milta h kuki isme id primary key k sth sth auto increament feature lga h uska mtlb h null dalne k se next value ye apne aap leta h 
+select * from language; 
+insert into language values (2, "hh", NOW());
+-- 2 usme already hone k karan ye error dega yha value add nhi hogi
+select * from language;
+insert into language values (9, "gg", NOW());
+-- yha 9 hone k karan ye value add nhi krega error dega
+select * from language;
+insert into language values (11, "dvf", NOW());
+-- 11 pr hmne dvf diya h
+select * from language;
