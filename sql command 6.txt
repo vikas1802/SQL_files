@@ -1,0 +1,61 @@
+use sakila;
+desc language;
+select * from language;
+insert into language values(13, 'rudd', "2020-09-23 10:20:10");
+-- is trh hm date change kr skte h or values apne according set kr skte h
+select * from language;
+insert ignore into language values (23, 'rudd', "2020-09-23 10:20:10");
+-- yha se warning aaygi error nhi data insert nhi hoga kuki 23 pe duplicate entry psbl nhi hmare pas 23 pr already data added h yha ignore nhi lgate to data insert to nhi hota pr error aati h
+select * from language;
+insert into language values (13, 'rudd', "2020-09-23 10:20:10");
+-- yha error aati h kuki 13 pe already phle data h
+insert into language values (15, 'rudd', "2020-09-23 10:20:10",45);
+-- yha colom 3 h or value 4 aa rhi h to ye error dega isme ignore lga de to warning aati h
+insert ignore into language values (16, 'rudd', "2020-09-23 10:20:10",455);
+-- yha ignore dene se bhi error aaygi kuki warning vala case hmesa primary key k liye chlta h yha data hi 4 de rhe h or colom 3 h isliye ignore dene se bhi error aata h
+insert into language(language_id, name, last_update) values (17,'arabic',"2020-09-23 10:20:10");
+-- yha se bhi data insert ho jayga
+select * from language;
+insert into language(last_update, name) values("2020-09-23 10:20:10","arabic");
+-- yha se jis trh colom name diye h us according value set hogi or id auto incremaent hone k karan bydefault agli aa jaygi
+select * from language;
+insert into language(last_update, name) values("2020-09-23 10:20:10","arabic"),("2020-09-23 10:20:10","arabic"),("2020-09-23 10:20:10","arabic");
+-- is trh ek sath tin value ek bar me add ho jaygi
+select * from language;
+insert into language(name,last_update) values("2020-09-23 10:20:10","arabic");
+-- yha error aati h kuki phle name diya h or value me phle last_update ki value di h mtlb jo hm coloum phle likhte h usi ki value phle likhni h
+insert into language set language_id=100, name = 'abc';
+-- yha se id 100 or name abc ho jayga or time vala colom default generate hone k karan present date time leta h is trh se bhi hm data ko insert krte h
+-- database
+create database test;
+-- database bnaya ise dubara chlane pr error aata h ki database already exixts
+create database if not exists test;
+-- iska mtlb h databse phle h to use skip krdo mt bnao pr error mt do or is name se database nhi h to use bna do us condition me yha present hota h to warning aati h
+use test;
+show tables;
+-- yha se pta lga ki test me koi tables nhi h
+-- ddl statement = create = table, index, view
+create table employee(eid int , ename char(20), email char(20));
+-- table bnai h
+desc employee;
+-- table ka structor chek kiya h
+insert into employee values(1, "vikas", "vikas@gmail.com");
+-- data employee me insert kiya
+insert into employee values(1, "vikas");
+-- yha error aayga kuki 3 colom h or hm value 2 de rhe h
+insert into employee values(1, "vik", "vikas@gmail.com");
+-- yha id primary nhi h to duplicate value possible h
+insert into employee values(1, "vikas", null);
+-- yha se email me null store ho jayga
+insert into employee (eid, email, ename)values(1,  "vikas@gmail.com","vj");
+-- yha se jis trh colom likhe us according value set krdi h
+insert into employee (eid, email)values(4,  "vikas@gmail.com");
+-- yha se 2 hi colom likhe h to do me hi value add hogi or bydefault tisre me null aa jayga mtlb jo colom hm nhi likhege usme null chla jayga
+select * from employee;
+create table employee2 (eid int default 0, ename char(20), email char(20));
+-- yha se table bnai h jisme ydi hm id nhi de to bydefault 0 aayga or baki ename or email me null hi aayga
+insert into employee2 (ename, email) values ("abc", "abc.com");
+-- yha se id 0 aa gyi h
+select * from employee2;
+insert into employee2 (eid,ename, email) values (null,"abc", "abc.com");
+-- yha se eid null aa jaygi mtlb jo hm dege vo aa jaygi
