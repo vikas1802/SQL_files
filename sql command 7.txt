@@ -1,4 +1,4 @@
--- String functions
+	-- String functions
 -- chinise charactor = 	是
 select length("是");
 -- yha se 3 milta h mtlb ye kisi bhi string ki byte form me length return krta h ise hm from dual lga k bhi likh skte h

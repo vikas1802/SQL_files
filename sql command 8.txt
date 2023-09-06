@@ -1,0 +1,129 @@
+use test;
+create table student(sid int, email char(20));
+select * from student;
+-- dml insert
+insert into student values(1,null);
+-- yha se sid me 1 or email me null store ho jayga
+insert into student values(null,"abc");
+-- yha se sid me null or email me abc store ho jayga
+insert into student (sid )values(3);
+-- yha se sid me 3 store hoga or email me null store hoga
+insert into student (sid, email)values(0,"abc");
+-- yha se sid me 0 or email me abc store hoga
+create table student2 (sid int, email char(20) default "hey");
+insert into student2(sid, email) values(1, "tushar");
+-- yha se sid me 1 or email me tushar store hoga
+select * from student2;
+insert into student2(sid, email) values(1, null);
+insert into student2 (sid, email) values (1);
+-- yha error aaygi kuki sid or colum dono diye h pr values only sid ki di h
+insert into student2 values (1);
+-- hmare pas total 2 colom h or values hmne ek hi di h isliye error aaygi
+insert into student2 values (2," ");
+-- yha se sid 2 or email me khali space store hoga
+insert into student2 (sid) values (3);
+-- yha sid me 3 store hoga pr email ki value bydefault hmne hey set ki h isliye vha hey store ho jayga
+select * from student2;
+-- yha se sid me 1 or email me null store hoga
+-- constrains => condition => invalid data cannot be inserted
+-- not null agr hmne not null set kiya to hm usme null nhi de skte
+create table student3(sid int not null  default 0, email char(20) default "vikas");
+insert into student3 (email) values("user");
+-- yha 0 aa jaygi sid ki value kuki hmne bydefault sid ki value 0 set ki h 
+insert into student3 (sid, email) values(null,"user");
+-- yha error aaygi kuki sid null nhi ho skti hmne not null set kiya h
+create table student_unique(sid int unique  default 0, email char(20) default "vikas");
+insert into student_unique(sid, email) values(1,"user");
+-- yha sid me 1 or email me user store ho jayga
+insert into student_unique(sid, email) values(1,"user");
+-- yha sid unique h isliye duplicate allow nhi hogi isliye error aayga
+insert into student_unique(sid, email) values(null,"user");
+-- sid me null posible h kitne bhi null aa skte h
+insert into student_unique(sid, email) values(null,"user");
+-- yha error nhi aaygi kuki kitne bhi null aa skte h
+insert into student_unique(sid) values(5);
+-- yha se sid me 5 store hoga or email me bydefault vikas store hoga hmne vikas set kiya h
+select * from student_unique;
+-- null ka mtlb h no refrence mtlb hm null s compare nhi kr skte kisi data ko
+select sid, sid+5 from student_unique;
+-- null k alava jha jha id number h usme 5 add hoke milega
+insert into student_unique(email) values("user");
+-- yha bydefault sid ki value 0 aaygi hmne select kr rkha h
+insert into student_unique(email) values("user");
+-- ab error aygi kuki 0 ek bar hi aayga kuki 0 bhi unique value consider krega bar bar 0 nhi ho skta h
+select * from student_unique;
+-- primary key = to use identify the raw and colum data by a unique value
+create table employee(eid int primary key, ename char(20));
+-- primary key automatic not null hoti h isliye nhi likhe
+insert into employee values(1,"vjain");
+insert into employee values(1,"vjain");
+-- error aaygi kuki eid unique h 1 do bar nhi dal skta
+insert into employee values(null,"vjain");
+-- isme null nhi dal skte isme sara record unique hota h
+select * from employee;
+insert into employee (ename)values("vekas");
+-- yha error aaygi kuki eid hmari default value store nhi krega
+insert into employee (eid, ename) values (0,"golu");
+-- yha eid me 0 or ename me golu store ho jayga
+create table employee1(eid int, ename char(20), primary key(eid));
+-- is trh bhi hm last me bta skte h ki meri konsi column primary key h
+select * from employee1;
+-- data type in sql  = numarical, string, date
+create table ex3(eid int(1));
+-- yha ek table bnai jiski limit 1 hai
+insert into ex3 values(4);
+-- yha se ex3 me 4 store ho jayga
+insert into ex3 values(5);
+insert into ex3 values(4455);
+insert into ex3 values(-45);
+insert into ex3 values();
+-- yha vo null dal dega
+select * from ex3;
+create table emp( eid int(3) zerofill);
+-- yha se table bnai h jiski limit 3 h or zerofill ka mtlb h yadi 3 se km charector insert krege to ye left side me 0 add kr dega
+insert into emp values (44);
+-- yha hmne 2 hi charactor diye h mtlb yha 044 store hoga
+insert into emp values (4);
+-- yha hmne 1 hi charactor diye h mtlb yha 004 store hoga
+insert into emp values (444);
+-- yha hmne 3 charactor diye h uski size bhi 3 h mtlb 0 nhi store hoga khi bhi
+insert into emp values (4444);
+-- yha hmne 4 charactor diye h uski size 3 h mtlb size se jyada kitne bhi value aa skte h
+insert into emp values ();
+-- yha se vo null value store krega
+select * from emp;
+create table emp3( eid int(2) signed);
+insert into emp3 values(15);
+-- yha se 15 store ho jayga 
+insert into emp3 values(5);
+-- yha se 5 store ho jayga jbki size 2 h to bhi km data store ho skta h
+insert into emp3 values(523);
+-- yha se 523 store ho jayga jbki size 2 h to bhi mtlb limit se jyada data store ho skta h
+insert into emp3 values(-523);
+-- isme ngtv number bhi store ho skta h signed me
+select * from emp3;
+create table emp4( eid int(2) unsigned);
+insert into emp4 values(4);
+-- yha se 4 store hoga
+insert into emp4 values(-6);
+-- yha se -6 store nhi hoga kuki unsigned me ngtv data store nhi hota h
+select * from emp4;
+-- signed = only  pstv number
+-- unsigned = pstv and ngtv both
+-- tinyint = 1 byte = 8 bit = 2(8) 
+-- smallint = 2 byte = 2(16)  
+-- mediumint = 3 byte = 2(24) 
+-- int = 4 byte = 2(32) 
+-- bigint = 8 byte = 2(64)
+-- boolean is store as a tinyint inside the sql = 1 byte
+-- zerofill = limit k charactror se km aane pr left me 0 add ho jana
+create table test_bool (i bool);
+insert into test_bool values(true),(false);
+select * from test_bool;
+-- yha se 1 or 0 milta h 1 true k liye or 0 false k liye
+insert into test_bool values(1),(0),(-128),(+127);
+-- yha se 0 1 -128 +127 store ho jata h
+select * from test_bool;
+-- acid properties
+-- how acid property implements in rdbms
+-- constratins
