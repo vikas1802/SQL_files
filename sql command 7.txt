@@ -1,0 +1,104 @@
+-- String functions
+-- chinise charactor = 	是
+select length("是");
+-- yha se 3 milta h mtlb ye kisi bhi string ki byte form me length return krta h ise hm from dual lga k bhi likh skte h
+select char_length("是");
+-- yha se 1 milta h mtlb ye total number of charactor return krta h ise hm from dual lga k bhi likh skte h
+-- concat method
+select concat("h","i") from dual;
+-- yha s dono word add ho jayge
+select concat("h","i","i") from dual;
+-- yha se tino word add ho jayge
+select concat("h","-","i") from dual;
+-- yha dono word k bich me highpn(-) add ho jayga
+select concat("h","-",1) from dual;
+-- concat_ws method ka use data ko septare form me jodta h isme jo phle string dete h us according data seprate hoke add hota h
+select concat("h",1) from dual;
+-- yha integer bhi add ho jayga kuki integer bydefault string me convert ho skta h
+select concat_ws("-","hii","hello") from dual;
+-- yha dono data - se seprete hote h data 2 se jyada bhi ho skte h 
+select upper("hii");
+-- yha se hii upper case me milega
+select substr("hello",1);
+-- yha se hello milega mtlb 1 indexing se last tk string nikalni h yha 1 indexing pr h hi aata h string  me indexing 1 se start hoti h
+select substr("hello",2);
+-- yha ello milta h kuki indexing 2 pr e aata h 
+select substr("hello",-2);
+-- yha se lo milta h mtlb - me indexing dene pr ye ulta count krta h yha -1 pr o hai or -2 pr l aata h to yha se -2 or -1 tk ka data milta h
+ select substr("hello",0);
+ -- yha 0 dene se koi output nhi aata h kuki string me indexing 0 se start nhi hoti h
+  select substr("hello",2,3);
+  -- yha 2 index se shuru aage 3 charactor tk ka data milega mtlb first number ka mtlb h kha se indexing shuru krni h or last number ka mtlb h usse 1 km data tk milna jese 2nd index pr e hai or uske bad 3 charactor h mtlb uske bad 3-1 =2 data hi milege mtlb e k bad 2 data ll hai isliye ell mila
+   select substr("hello",1,3);
+--    yha se hel milega kuki 1 index pr h hai or uske bad 3 charactor mtlb 3-1 = 2 milege isliye hel aayga
+  select substr("hello",3,1);
+--   mtlb 3rd index pr l hai or uske bad 1 data mtlb 1-1 = 0 milege isliye only l aaya h
+select substr(substr("hello",2,3),2);
+-- yha se phle andar vali substr k liye ell mila fr ell me 2nd indexing pe l hai isliye ll mila kuki ell me vo 2nd indexing se shuru hoke last tk jayga kuki usme last number nhi h
+select instr("hello","e");
+-- yha se 2 milta h yha se hm kisi charactor ki indexing value nikal skte h jese yha se e ki indexing value 2 h
+select instr("hello","lo");
+-- yha se ek charactor k bad kitne hi word aaye ye hmesa 1word ki hi indexing return krta h yha l ki indexing 4 hai
+select instr("hello","ez");
+-- yha ez is string ki substring nhi h isliye 0 return krega
+select locate("el","hello");
+-- isme bhi e ki indexing return hoti h yha s 2 milega
+select locate("l","hello");
+-- isme l ki indexing return hoti h yha s 3 milega
+-- is trh hm instr me phle string bad me substring dete h or locate me phle substring or bad me string dete h
+select locate("a","rajasthan");
+-- yha se 2 miilega kuki a ki indexing first me 2 hi h
+select locate("a","rajasthan",3);
+-- yha se 4 milega kuki bad me diya gya number ka mtlb h 3 indexing se cheak krega ki a ki konsi indexing number h
+select ltrim("    xyz");
+-- yha se xyz milega or leftside k space remove hoge
+select rtrim("xyz     ");
+-- yha se xyz milega or rightside k space remove krega
+select trim("       xyz     ");
+-- yha se dono side k space remove hoge
+  select trim(leading " " from "       xyz     ");
+  -- yha se only first left side k space remove hoge ending k nhi
+   select trim(trailing " " from "       xyz     "); 
+   -- starting k space remove nhi hoge ending k ho jayge
+    select trim(both " " from "       xyz     ");
+-- yha se dono side k space remove hoge trim vese bhi bydefault both hi hota h
+-- yadi length check krni h trim k sth
+ select length(trim(both " " from "       xyz     "));
+--  yha se 3 milega
+   select trim(both " " from "       x   yz     "); 
+-- ydi characor k bich me whitespace ho jese (x    yz) ho to ise trailing ya leading ya both tino nhi hta  skte h
+ --     ltrim ka mtlb h leftside se whitespace ya charactor remove krna bydefault only whitespace remove krega
+--      rtrim ka mtlb h rightside se whitespace ya charactor remove krna bydefault only whitespace remove krega
+--      trim ka mtlb h rightside ya leftside se whitespace ya charactor remove krna bydefault only whitespace remove krega
+-- yadi bhut sare word ho or koi specific charactor remove krna h to
+   select trim(both "z" from "zzzz    yz");
+   -- yha se y milega mtlb sbhi z remove ho jayge pr space remove nhi hoga
+    select trim(both "z" from "zzzz    yz    ");
+    -- yha se space right side k or bich k dono remove nhi hoge only z remove hoga last me yz milega kuki right me space aa rha h only z aata to remove ho jata
+      select trim(both "z" from "zzzz   fdc zz  yz");
+     --  yha se centre vala z nhi htega left right k htege
+     -- lpad = left me char add krna yha sbse phle string dege uske bad kitne number chiaye vo dege uske bad jo add krna h v char dege
+     -- rpad = right me char add krna yha sbse phle string dege uske bad kitne number chiaye vo dege uske bad jo add krna h v char dege
+     select lpad("hello",6,"s");
+     -- yha hello me 5 hi the hm chahte h 6 ho or 6 pr s add ho to ye left me s add kr dega
+     select lpad("hello",5,"s");
+     -- yha hello me 5 hi the or hme 5 hi chaiye or hm  chahte h yadi hello me 5 nhi h to ye s add krde lekin hello me 5 hone k karan ye add nhi krega only hello return krega
+     select lpad("hello",7,"s");
+      -- yha hello me 5 hi the hm chahte h 6 ho or 6 or 7 pr s add ho to ye left me s add kr dega is trh hm kitne bhi number le skte h
+      select lpad("hello",3,"s");
+      -- yha se ye left se 3 tk chlke output dega
+       select rpad("hello",6,"s");
+     -- yha hello me 5 hi the hm chahte h 6 ho or 6 pr s add ho to ye right me s add kr dega
+     select rpad("hello",5,"s");
+     -- yha hello me 5 hi the or hme 5 hi chaiye or hm  chahte h yadi hello me 5 nhi h to ye s add krde lekin hello me 5 hone k karan ye add nhi krega only hello return krega
+     select rpad("hello",7,"s");
+      -- yha hello me 5 hi the hm chahte h 6 ho or 6 or 7 pr s add ho to ye right me s add kr dega is trh hm kitne bhi number le skte h
+      select rpad("hello",3,"s");
+      -- yha se ye left se 3 tk chlke output dega isme rpad de to bhi ye bydefault left s output dega
+      select replace("vikasa","a","i");
+      -- is string me jha jha a h vha vha i replace ho jayga
+       select replace("vikasa","ak","i");
+       -- is string me ak ek sth nhi h isliye kch replace nhi hoga
+       
+
+
