@@ -1,0 +1,82 @@
+-- datatype = char and varchar
+use test;
+create table ep1(name char(20));
+insert into ep1 values ("bvcfkcsdbjclaskcbhjsdcksdbjax");
+-- error kuki 20 se jyada value h
+insert into ep1 values("a");
+-- no error
+create table ep2(name1 char(20));
+insert into ep2 values("a");
+-- no error
+select name1, length(name1) from ep2;
+-- 1 aayga
+create table ep(name1 varchar(3));
+insert into ep values("a b");
+select name1, length(name1) from ep;
+-- 3 aayga space include because use varchar
+create table ep4(name1 char(6));
+insert into ep4 values("a b");
+select name1, length(name1) from ep4;
+-- space not include because char
+create table ep5(name1 char(8));
+insert into ep5 values("a vb u      ");
+select name1, length(name1) from ep5;
+-- yha se 8 milega kuki kitne bhi white space aao vo hmesa last k aage k 2 space hi count krta h
+create table ep6(name1 char(45));
+insert into ep6 values("a vb d      ");
+select name1, length(name1) from ep6;
+-- constraint = 
+create table ep_var1(eid int check(eid>2));
+insert into ep_var1 values(1);
+-- error because cvalue 2 se bdi honi chaiye
+insert into ep_var1 values(6);
+-- error nhi h kuki ye 2 se bdi h
+create table ep_var2(gender char(1) check(gender in ("m","f","o")));
+insert into ep_var2 values("G");
+-- error aaygi
+insert into ep_var2 values("m");
+-- no error
+create table ep_var5(age int, gender char(1),check(age>10 and gender in ("m","f","o")));
+insert into ep_var4 values (2,"m");
+-- error
+insert into ep_var4 values (12,"m");
+-- no error
+insert into ep_var4 values (null,"m");
+-- no error
+insert into ep_var4 values (null,null);
+-- no error
+-- update and delete command in dml
+use test;
+delete from ep_var4;
+-- ep_var4 table detele hui h
+create table ep_var6(age int, gender char(1),check(age>10 and gender in ("m","f","o")));
+insert into ep_var6 values (2,"m");
+-- error
+insert into ep_var6 values (12,"m");
+-- no error
+insert into ep_var6 values (112,"m");
+-- no error
+insert into ep_var6 values (null,"m");
+-- no error
+insert into ep_var6 values (null,null);
+-- no error
+delete from ep_var6 where age = 12;
+-- jha age = 12 h vo delete hoga
+update ep_var6 set age=  10;
+-- sari raws me age 10 set ho gyi h
+update ep_var6 set age=  11 where age = 10;
+-- jha 10 age h vha 11 ho gyi h
+update ep_var6 set age=  11 limit 1;
+-- 1 limit tk mtlb ek upr k data me value 11 set hogi
+-- iske sath hm offset bhi use kr skte h
+delete from ep_var6 order by age limit 1;
+-- yha data sort hoga fr upr se sbse chote 1 data delete hoga
+select * from ep_var6;
+drop table ep_var6;
+-- yha se table show nhi hoti h
+-- yha se table remove hogi jisse table ka structoer(data) or datatype dono delete hota h yha se hm data vaps le skte h rollback kr skte h(undo)
+truncate table ep_var6;
+-- yha se table show hoti h pr data delete ho jata h hm yha se data vaps nhi la skte h yha se phli vali table k data ko drop krke vaps us table ka structor bna deta h 
+-- truncate hmesa delete or drop se fast hota h
+-- delete or drop se data rollback kr skte h pr truncate se nhi
+select * from ep_var6;
