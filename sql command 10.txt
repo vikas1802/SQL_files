@@ -1,0 +1,88 @@
+-- use test;
+-- -- alias name = nick name to express a acha name (readability)
+-- use sakila;
+-- select first_name, concat("Mr ", first_name) as full_name from actor;
+-- -- yha first name k aage mr lgake sara data milega jiska name full name hoga 
+-- select first_name, concat("Mr ", first_name) full_name from actor;
+-- -- bina as keyword bhi chlta h
+-- select first_name, concat("Mr ", first_name) as full_name from actor where full_name "mr nick";
+-- -- mtlb error kuki alias name ka use where join on clause me nhi kr skte
+-- -- alias order by group by me use ho skta h
+-- -- alias bnane k do trike h ek as keyword dusra normally
+-- select first_name, length(first_name) from actor;
+-- -- ye fucntions se single raw pr ek sth kam krte h
+-- -- multipul raws ko ek sath similar operatipn perform krna h to groupby ka use hota h
+-- select * from film;
+-- create table t1(id int, city varchar(20));
+-- insert into t1 values(1,"hii");
+-- insert into t1 values(2,"hii2");
+-- insert into t1 values(null,"hii3");
+-- select * from t1;
+-- select count(*) from t1;
+-- -- ese colom ko select krega jisme null value na ho
+-- select count(id) from t1;
+-- -- isme null h isliye 2 select krega null skip krega
+-- select count(city) from t1;
+-- -- yha se 3 milega mtlb null nhi h
+-- select sum(id) from t1;
+-- -- id k total sum dega
+-- select distinct(city) from t1;
+-- -- yha se unique value return krega
+-- select avg(id) from t1;
+-- -- yha se id ka avg dega
+-- select count(distinct city) from t1;
+-- -- yha se distinct city count hogi
+-- select * from film where film_id = 3;
+-- -- 3 id vali film ka data milega
+-- select film_id from film group by film_id;
+-- -- yha se record pura ek collection form me milega mtlb film_id pure ek sort form me milegi
+-- select film_id, count(film_id) from film group by film_id;
+-- -- yha se  every id ki particular value milegi ki vo kitni bar aai h
+-- select film_id, count(film_id), sum(film_id) from film group by film_id;
+-- -- yha se sum milega
+-- select rental_duration, count(rental_duration), sum(film_id) as total from film group by film_id;
+-- -- yha se sbse phle 1 id ki rental duration milegi uske bad id k accrording sum  milega uska name count hoga 
+-- select * from film;
+-- select concat(rental_duration,count(rental_duration),sum(film_id)) as total from film group by film_id;
+-- -- yha se sara data ek colom me string form me milega
+-- use hospital;
+-- select * from patient;
+use world;
+-- world database ko use kiya
+select * from country;
+select count(continent) from country;
+select distinct(continent) from country;
+-- unique continent nikalna
+select continent from country group by continent;
+-- group k according sare continent nikalna
+select continent, count(*) from country group by continent;
+-- sare continent ka group k accrodinng data dekhna ki kisme kitne continent h
+select continent, count(*), sum(population) from country group by continent;
+-- sare continent ka group k accrodinng data dekhna ki kisme kitne continent h or population ko sum krna
+select continent, count(*), sum(population) from country group by continent having count(*)>50;
+-- sare continent ka group k accrodinng data dekhna ki kisme kitne continent h or population ko sum krna or 50 se upr vale continent dekhna
+-- groupby k sath where clause nhi lgta h isliye filter krne k liye having lgate h
+use sakila;
+desc actor;
+desc actor_info;
+select first_name from actor limit 3;
+select first_name from actor_info limit 3;
+-- 3 tk firstname liya actor_info table se
+select first_name from actor_info order by first_name limit 3;
+-- yha asc order se firstname milege 3 tk
+-- set opetation:    1 union operator
+-- union k liye data type same hona chiaye column name diffrent ho skta h
+-- int string me convert ho jayga pr string int me convert nhi hoga
+select first_name from actor union select first_name from actor_info;
+-- yha se dono ka data combind hoke milega mtlb actor or actor_info dono k frst name milege pr comon element nhi milege union unko remove kr dega mtlb ye bydefault distinct hota h
+select first_name from actor union all select first_name from actor_info;
+-- yha se union all krne pr common element bhi count krta h
+select first_name from actor intersect select first_name from actor_info;
+-- intersect hmesa common element hi nikal k deta h
+select first_name from actor expect select first_name from actor_info;
+-- vo data jo first(actor) me h pr second(actor_info) me nhi h use return krta h data first ka hi return krta h
+-- joins=4 types of join
+-- 1 inner join = first and second ka only common data
+-- 2 left join = first+common
+-- 3 right join = second+common
+-- 4 full outer join = first+common+second table
