@@ -1,0 +1,55 @@
+use sakila;
+show tables;
+desc actor;
+-- name, actor_id
+desc actor_info;
+-- film_info
+select * from actor_info; 
+select * from actor;
+select * from film_actor;
+-- actor id film_table me bhi h
+select actor_id, first_name,film _id from actor;
+-- actor table me film_id nhi h isliye error aaygi
+select actor_id, first_name,film_id from actor inner join film_actor;
+-- yha error aaygi kuki film_actor or actor dono table me actor_id h ise nhi pta kha se data uthana h
+select actor.actor_id, first_name,film_id from actor inner join film_actor;
+-- yha se actor table ka hr ek record film_actor table k sabhi record se match krega jese ek table me 4 record or dusri me 3 h to total 12 value milti
+select actor.actor_id, first_name,film_id from actor inner join film_actor using (actor_id);
+-- yha only actor id hi dusri table k data ko match krega
+create table student(id int, name varchar(20));
+insert into student values(1, "tushar");
+insert into student values(2, "tushar2");
+select * from student;
+create table student_hobby(id int, hobby varchar(20));
+insert into student_hobby values(1, "cricket");
+insert into student_hobby values(2, "tannis");
+insert into student_hobby values(3, "football");
+select * from student_hobby;
+select count(*) from student;
+-- total number of record in student
+select count(*) from student join student_hobby;
+-- yha total 6 aayge kuki student k dono student_hobby k tino data se match hoga to 2*3=6
+select student.id, name from student inner join student_hobby;
+-- yha first table ka data second se match hua h
+-- inner join ki jgh join bhi likhe to koi fark nhi pdta h
+-- method 1 with using clause
+select student.id, name, hobby from student inner join student_hobby using(id);
+-- yha btana pdta h using me common kya h dono table me yha id common h to ye usko skip kr dega repeat nhi krega or jo using me diya h uske accroding hi result milta h jese student me id 2 hi common h to 2 hi milege
+-- method 2 with where clause
+select student.id, name, hobby from student,student_hobby where student.id=student_hobby.id;
+-- hm ese bhi likhe to output same aayga yha where k sath condtion lgate h ki hme is position me output chaiye
+-- method 3 with on clause
+select student.id, name, hobby from student inner join student_hobby on (student.id=student_hobby.id);
+-- same output aayga
+ insert into student values(5,"vikas");
+select student.id, name, hobby from student inner join student_hobby on(student.id=student_hobby.id);
+-- is time 5 ka record nhi milega kuki hobby table me id 5 nhi h
+select student.id, name, hobby from student left join student_hobby on(student.id=student_hobby.id);
+-- yha se 5 ka data bhi milega kuki left join common k sath left mtlb frst table ka sara record deta h
+select student.id, name, hobby from student right join student_hobby on(student.id=student_hobby.id);
+-- yha common or second table ka pura data milega
+select a.actor_id, first_name, last_name,film_id from actor as a inner join film_actor as f on a.actor_id=f.actor_id;
+-- yha actor table ko a or film_actor table ko f alias name diya h
+select actor.actor_id, first_name, last_name, film_id, title, release_year from actor inner join film_actor using(actor_id) inner join film using (film_id);
+-- sbse phle actor or film actor table ko actor_id k through joda fir film_actor or film table ko film_id k through joda kuki title hmare passs film table me tha to jodna jruri tha
+-- natural join = yadi common element ho to same inner join ki jese work krta h or nhi ho to cross join ki trh work krega
