@@ -1,0 +1,64 @@
+use sakila;
+desc film;
+desc inventory;
+-- inventory or film dono table me film_id common h
+select film.film_id, title from film;
+-- yha s film table ki filmid or title milega
+select film_id, last_update from inventory;
+-- yha se inventory table li filmid or lastupdate milegi
+desc rental;
+-- yha rental table me inventory id h jo innventory table me bhi h
+select title, inventory.film_id, inventory.last_update from film inner join inventory using(film_id);
+-- yha se film table ka title inventory ka filmid or lastupdate milega ise inventory ki filmid se jodna h
+select title, rental_id from film inner join inventory using(film_id) inner join rental using (inventory_id);
+-- yha se film id se title or rental se rental_id nikali h bich me inventory ka use kiya h kuki hmare pas film or rental me direct koi common element nhi h isliye phle film id se film or inventroy ko joda fir inventory_id se inventory or rental ko joda
+ select title, rental_id from film inner join inventory using(film_id) inner join rental using (inventory_id) where rental_id=4863;
+ -- yha se vo movie ka title milega jiski rental_id 4863 hogi
+  select title, rental_id from film inner join inventory using  (film_id) inner join rental using (inventory_id) group by title;
+  -- yha se error aayga kuki hmne phle 2 field liye h or hm bad me only ek title ko hi group by kr rhe h dusri pr koi operation perform nhi kr rhe
+select title, count(rental_id) from film inner join inventory using  (film_id) inner join rental using (inventory_id) group by title;
+-- yha se error nhi aaygi kuki hmne title ko group by krke rental_id ko count kr liya h
+select title, count(rental_id) as totalcount from film inner join inventory using  (film_id) inner join rental using (inventory_id) group by title having totalcount>15;
+-- yha se vo data milega jiski rental id 15 se jyada h use hmne totalcount name diya h
+select title, count(rental_id) as totalcount from film inner join inventory using  (film_id) inner join rental using (inventory_id) group by title having totalcount>15 order by totalcount desc;
+-- yha se vo data milega jiski rental id 15 se jyada h use hmne totalcount name diya h usko sort krke data milega
+select cust.customer_id, rental.rental_id, cust.email, inv.film_id from customer as cust inner join rental using (customer_id) inner join inventory as inv using (inventory_id);
+-- yha 3 table ko ek sth join kiya or customer s customer id, email inventory se film id or rental se rental id nikala customer ko cust or inventory ko inv name diya h
+select cust.customer_id, rental.rental_id, cust.email, inv.film_id, film_category.category_id from customer as cust inner join rental using (customer_id) inner join inventory as inv using (inventory_id) inner join film_category using (film_id);
+-- yha 4 table ko ek sth join kiya or customer s customer id, email inventory se film id or rental se rental id nikala customer ko cust or inventory ko inv name diya h or film category table s category id nikali h
+select cust.customer_id, rental.rental_id, cust.email, inv.film_id, film_category.category_id from customer as cust inner join rental using (customer_id) inner join inventory as inv using (inventory_id) inner join film_category using (film_id) where email = "JANE.BENNETT@sakilacustomer.org";
+-- yha 4 table ko ek sth join kiya or customer s customer id, email inventory se film id or rental se rental id nikala customer ko cust or inventory ko inv name diya h or film category table s category id nikali h ye particular details usi bnde ki h jiska hmne email diya h
+select cust.email, film_category.category_id, category.name from customer as cust inner join rental using (customer_id) inner join inventory as inv using (inventory_id) inner join film_category using (film_id) inner join category using (category_id);
+-- yha se category table ko add kiya h or email categoryid or name access kiya
+select cust.email, count(film_category.category_id), category.name from customer as cust inner join rental using (customer_id) inner join inventory as inv using (inventory_id) inner join film_category using (film_id) inner join category using (category_id) group by email, name;
+-- 2 pr group by or ek pr count lgaya h
+-- --------------------------------------------
+-- self join
+create table employee(eid int, ename varchar(20), email varchar(20), manager_id int);
+insert into employee values(1, "tushar", "tushar@gmail.com", null);
+insert into employee values(2, "gopal", "gopal@gmail.com", 1);
+insert into employee values(3, "vikas", "vikas@gmail.com", 4);
+insert into employee values(4, "ram", "tushar@gmail.com", 2);
+select * from employee;
+create table manager (eid int, ename varchar(20), email varchar(20));
+insert into manager values (1, "viksd", "vj@gmail.com");
+insert into manager values (2, "ram", "ram@gmail.com");
+insert into manager values (3, "kk",    "bfnjbmxkvz");
+select emp.eid, emp.ename, emp.manager_id, manager.eid, manager.ename from employee as emp, employee as manager where emp.manager_id=manager.eid;
+
+use sakila;
+show tables;
+select rental_duration from film where film_id =1;
+-- us film ka rental duration milega jiski film id 1 ho
+select film_id, rental_duration from film where rental_duration=6;
+-- vo film id or rental duration milega jiski rental duration 6 ho
+-- ---------------------------------------------------------
+-- nested query / sub query
+-- ek query ka output dusri query pr depend krta h
+-- single result nestedquery/subquery
+select film_id, rental_duration from film where rental_duration=
+(select rental_duration from film where film_id =1);
+-- yha se sbse phle bracket k andar vali query solve hui vha s 6 mila fr usse bhr vali query solve hui mtlb 
+-- sbse phle vo rental_duration mili jiski film id 1 h yha se 6 mila fr vo film id nikali jiski rental duration 6 h
+
+
