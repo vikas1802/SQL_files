@@ -1,0 +1,119 @@
+use employees;
+select * from employees;
+select hire_date from employees where emp_no = 10003;
+select * from employees where hire_date>"1986-08-28";
+select * from employees where hire_date>
+(select hire_date from employees where emp_no = 10003);
+select * from employees where first_name = "georgi" and birth_date="1953-09-02";
+select * from employees where emp_no=(select * from employees where first_name = "georgi" and birth_date="1953-09-02");
+select title from titles where emp_no=10001;
+select * from titles where title = (select title from titles where emp_no=10001);
+select title from titles where emp_no in (10001,10002);
+select * from titles where title = (select title from titles where emp_no in (10001,10002));
+-- error kuki subquery ek bar me ek hi data return krti h yadi vo ek query return kre to hm = < > etc use kr skte h jese upr kiya
+-- yadi ek se jyada output de to hm dusre operator use krte h jese any, all,
+select * from titles where title = ANY(select title from titles where emp_no in (10001,10002));
+select * from salaries where emp_no=10002;
+select salary from salaries where emp_no=10002;
+select * from salaries where salary = (select salary from salaries where emp_no=10002);
+-- error kuki yha s multipul query return hogi
+select * from salaries where salary =Any(select salary from salaries where emp_no=10002);
+-- yha se phle 10002 vale employees ki salary milegi jo 6 h total fr vaps usse compare hoke salary milegi output me vo hi salary aaygi jo 10002 ko milti h
+select * from salaries where salary >Any(select salary from salaries where emp_no=10002);
+-- sbse phle resultset s highest value 72575 milegi uske bad sari salary 65828 se jyada hi milegi
+select * from salaries where salary <any (select salary from salaries where emp_no=10002);
+-- sbse phle resultset s highest value 72575 milegi uske bad yha sari salary 72575 s km hi milegi 
+select * from salaries where salary <=any (select salary from salaries where emp_no=10002);
+-- sbse phle resultset s highest value 72575 milegi uske bad yha sari salary 72575 s km hi milegi ya uske braber milegi
+select * from salaries where salary >=Any(select salary from salaries where emp_no=10002);
+-- sbse phle resultset s highest value 72575 milegi uske bad sari salary 65828 se jyada hi milegi ya uske braber milegi
+
+
+
+create table a(id int);
+insert into a values (10);
+create table b (id int);
+insert into b values (15);
+select * from b where id>10;
+-- yha se 15 milega kuki 10 se bda data b me 15 h
+select * from b where id>(select id from a);
+-- yha s 15 milega kuki 10 se bda data b me 15 h
+select * from b where id>any(select id from a);
+-- yha s 15 milega kuki 10 se bda data b me 15 h
+insert into a values (20);
+select * from b where id>(select id from a);
+-- error aaygi kuki subquery ek bar me ek hi value return krti h yha b me 15 h jo 10 se bda h pr 20 se chota h
+select * from b where id>any(select id from a);
+-- error nhi aaygi kuki any all operator hmesa ek se jyada value return krta h
+-- yha se resultset se ek bhi value satisfy ho jaye to output milega
+-- yha resultset me 10 or 20 h or b me 15 h mtlb 15 to 10 se bda h isliye 15 milega
+select * from b where id<any(select id from a);
+-- yha se resultset se ek bhi value satisfy ho jaye to output milega
+-- yha resultset me 10 or 20 h or b me 15 h mtlb 15 to 20 se chota h isliye 15 milega
+select * from b where id=any(select id from a);
+-- yha s kch nhi mielga ek bhi value equal hoti to milta
+-- a table ka data = 10 20
+-- b table ka data = 15
+-- isliye value dono me braber nhi h
+select * from b where id>all(select id from a);
+-- all hmesa resultset ki max value se compare krta h
+-- yha a ki max value 20 h jo a me rkhi value 15 se compare krega ab 20 15 se chota nhi h isliye kch nhi milega
+select * from b where id<all(select id from a);
+-- yha a ki max value 20 h jo a me rkhi value 15 se compare krega ab 15 20 se to chota h pr 10 se nhi h isliye kch nhi milega
+insert into a values (5);
+-- ab a ka data = 10 20 5
+-- b ka data = 15
+insert into a values (null);
+-- ab a ka data = 10 20 5 null
+-- b ka data = 15
+select * from b where id<all(select id from a where id is not null);
+-- kch nhi aayga kuki a se 10 20 5 milega pr null nhi milega kuki condition di h
+-- ab 15 20 se chota h pr 10 or 5 se nhi h
+select * from b where id in (select id from a);
+-- in operator hmesa common value check krta h common kch nhi h isliye kch nhi milega
+-- select * from a;  10 20 5 null
+-- select * from b;  15 
+-- isliye kch nhi milega ye specific value check krega
+use employees;
+select * from employees;
+show tables;
+select * from salaries;
+-- vo salary or uska count person nikalo jiski salary 60117 se jyada ho
+select salary, count(salary) from salaries group by salary having count(salary)>=
+(select count(salary) from salaries where salary = 60117 group by salary);
+-- yha vo salary or uska count milega jo 65 ya usse jyada ho kuki 60117 total 65 employess ki salary h
+select emp_no, first_name, last_name from employees join titles using (emp_no) where title = "manager" and emp_no =any
+(select emp_no from employees join titles using (emp_no) where title <> "manager");
+-- yha sbse phle us employee ka data mila jiska title manager nhi h uske bad vo employee ka data milega jiska title manager h or emp_no phle diye gye emp_no se match ho uska emp_no firstname or lastname milega
+select e.emp_no from employees as e inner join titles using (emp_no) where title <> "manager";
+-- jab title manager nhi ho uska emp_no nikalana h 
+-- without nested query direct join se bhi solve kr skte h is trh
+select distinct emp_no, first_name, last_name, mgr.title from employees join titles as mgr using (emp_no) join titles as nonmgr using
+(emp_no) where mgr.title = "manager" and nonmgr.title <> "manager";
+-- yha sbse phle us employee ka data mila jiska title manager h uske bad vo employee ka data milega jiska title manager nhi h or emp_no phle diye gye emp_no se match ho mtlb yha emp_no vo h jinka title manager nhi h
+select distinct emp_no, first_name, last_name, mgr.title from employees join titles as mgr using (emp_no);
+select employees.emp_no, first_name, last_name from employees, titles where (employees.emp_no = titles.emp_no);
+select employees.emp_no, first_name, last_name from employees, titles where employees.emp_no = 10001;
+-- vhi data milega jiski emp_no 10001 ho
+select employees.emp_no, first_name, last_name from employees, titles where employees.emp_no = 10001 and first_name = "georgi" and last_name = "facello";
+-- vhi data milega jiski emp_no 10001 ho or firstname georgi or last name facello ho
+-- other way of this query
+select employees.emp_no, first_name, last_name from employees, titles where (employees.emp_no, first_name, last_name) = (titles.emp_no, "georgi", "facello");
+-- vhi data milega jiski emp_no title table k  emp_no k braber ho or firstname georgi or last name facello ho
+-- other here (raw subquery)
+select mgr.emp_no, mgr.from_date as fd from titles as mgr, titles as other where mgr.emp_no = other.emp_no;
+-- ye self join h jha hm title ko title se hi join kr rhe h jsime ek bar uska name mgr or ek bar other rkha h
+-- yha vo data milga jha mgr ka emp_no other k emp_no k braber hoga mtlb data double bar repeat hoga or form date fd k roop me milegi
+select mgr.emp_no, mgr.from_date, mgr.title as fd from titles as mgr, titles as other where mgr.emp_no = other.emp_no and mgr.title = "manager" and mgr.title <> other.title;
+-- yha se vo data milega jiska title manager h pr vo title vaps other me nhi hona chaiye or kch bhi ho skta h
+select mgr.emp_no, mgr.from_date, mgr.title as fd from titles as mgr, titles as other where mgr.emp_no = other.emp_no and mgr.title = "manager";
+-- yha se vo data milega jiska title manager h pr vo title other me manager k sth sth kch bhi ho skta h
+select mgr.emp_no, year(mgr.from_date), mgr.title, other.title as fd from titles as mgr, titles as other where mgr.emp_no = other.emp_no and mgr.title = "manager";
+-- yha se vo data milega jiska title manager h pr vo title other managaer k sth sth kch bhi ho skta h
+select mgr.emp_no, year(mgr.from_date), mgr.title, other.title as fd from titles as mgr, titles as other where mgr.emp_no = other.emp_no and mgr.title = "manager" and mgr.title <> other.title;
+-- yha se vo data milega jiska title manager h pr vo title vaps other me nhi hona chaiye or kch bhi ho skta h
+select mgr.emp_no, year(mgr.from_date), year(other.from_date), mgr.title, other.title as fd from titles as mgr, titles as other where mgr.emp_no = other.emp_no and mgr.title = "manager" and mgr.title <> other.title and year(mgr.from_date)=year(other.from_date);
+-- yha se vo data milega jiska title manager h pr vo title vaps other me nhi hona chaiye or kch bhi ho skta h pr unke year bhi same hona chaiye
+select emp_no, year(mgr.from_date) as fd from titles as mgr where title = "manager" and (emp_no, year(from_date)) in (select emp_no, year(from_date) from titles where title <> "manager");
+-- yha se vo data milega jiska title manager h pr vo title vaps other me nhi hona chaiye or kch bhi ho skta h pr unke year bhi same hona chaiye
+
