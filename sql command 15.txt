@@ -1,0 +1,191 @@
+-- integer float double decimal
+-- agr kbhi bhi kisi table me doublr value store krni h to usme (totalno of value, precision) ye 2 data define krte h
+-- totalno of value = kul kitni digit honi chaiye
+-- precision = kul kitni decimal honi chaiye
+use sakila;
+create table xyz(price double(5,2));
+-- yha se table bnegi jisme kul 5 digit or 2 decimal no hoge
+insert into xyz values(15.24);
+-- yha se 15.24 store hoga
+insert into xyz values (15.2);
+-- yha se decimal k bad ek hi no liya h to dusra no vo bydefault 0 lega mtlb 15.20 store hoga
+insert into xyz values (15.257);
+-- yha se decimal k bad 2 hi no lene the isliye 7 ht jayga only 15.25 store hoga
+insert into xyz values(14235.24);
+-- yha out of range value error aaygi kuki total 5 hi no de skte h usme se bhi 2 decimal h mtlb integer 3 hi bachi h ab yha decimal se phle total 5 number h 
+insert into xyz values(1423.24);
+-- yha out of range value error aaygi kuki total 5 hi no de skte h usme se bhi 2 decimal h mtlb integer 3 hi bachi h ab yha decimal se phle total 4 number h 
+insert into xyz values(142.24);
+-- yha error nhi aaygi kuki decimal s phle 3 value aa rhi h
+insert into xyz values(15.24174);
+-- yha error nhi aaygi kuki decimal se phle 3 ya usse km number h km s km 2 decimal hone chaiye uske bad kitne bhi aa skte h isliye no error
+-- yha jo kam double me kiya vhi decimal me kre to bhi same output aayga
+drop table xyz;
+-- float value : 
+create table xyz (price1 float, price2 double);
+insert into xyz values (1.2324, 1.2324);
+-- yha dono me 1.2324 store hoga
+insert into xyz values (1.234567, 1.234567);
+select * from xyz;
+-- yha se price1 ka 1.23457 milega mtlb decimal k bad 5 digit tk hi data milega vo bhi sequence me nhi milega 
+-- yadi sequence me chaiye to decimal use kre or double ka pura data milega
+-- float = 4 byte non sequence
+-- decimal = 4 byte sequence
+-- double  = 8 byte sequence
+drop table xyz;
+create table xyz (birthdate date, birthtime time);
+-- YYYY-MM-DD = structure of date
+insert into xyz values("2023-09-26");
+insert into xyz values(curdate());
+-- present date insert hogi
+drop table xyz;
+create table xyz (birthdate date, birthtime time);
+-- YYYY-MM-DD = structure of date and HH:MM:SS = structure of time
+insert into xyz values("2023-09-26", "12:11:10");
+insert into xyz values(curdate(), curtime());
+-- present date and present time insert hoga
+drop table xyz;
+create table xyz (birthdate date, birthtime time, birthdata datetime);
+insert into xyz values("2023-09-26", "12:11:10", "2023-09-26 10:11:13");
+insert into xyz values(curdate(), curtime(), now());
+-- present date and present time or present datetime insert hoga
+select birthdata, year(birthdata) from xyz;
+-- yha se year aayga
+select birthdata, year(birthdata), yearweek(birthdata) from xyz;
+-- yha 2023 me di gyi date 39 week me aati hh isliye 202339 mile h kuki yearweek ek sth h
+select birthdata, year(birthdata), week(birthdata) from xyz;
+-- yha se 39 milega kuki diya gya birthdata me se 39 week aayga
+select birthdata, year(birthdata), quarter(birthdata) from xyz;
+-- 3 month ka ek quator hota h isliye 9va month 3rd quator me aata h isliye 3 mila ese ek sal me 4 quator aate h
+-- is trh lastday lastmonth monthname aadi function hote h
+select birthdata, year(birthdata), quarter(birthdata), datediff(birthdata, now()) from xyz;
+-- aaj ki date se biethdata  ki date ka difference milega
+select birthdata, year(birthdata), quarter(birthdata), datediff(now(), birthdata) from xyz;
+-- aaj ki date se biethdata  ki date ka difference milega aage aaj ki date di h yha se differece dekhne pr result pstv milega kuki aage di gyib date aaj se bdi h
+select birthdata, date_add(birthdata, interval 5 day) from xyz;
+-- yha se birthdata ki date me 5 day aage add ho jayge is trh year aadi aad kr skte h
+-- year month date weekoftheyear the day of tha date nikalni h 
+select birthdata, date_format(birthdata, "%b, %c, %y, %Y") from xyz;
+-- %b se english me mnth name milega or %c se number me month milega %y se chote format me year milega jese 23 or %Y se pura year milega jese 2023
+-- yha se month nikl jayga  
+-- datetime and timestamp
+-- timestamp = iski ek specific range h ye 1970 se 2038 tk ka data hi store kr skta h isse aage ka phle ka krna h to datetime ka use krte h 
+create table captions (text varchar(150), created_at timestamp default current_timestamp);
+insert into captions values ("hey", "2023-11-25 10:58:23");
+-- yha data store ho jayga agr hm time date nhi dalte to ye bydefault currentimedate leta kuki vo hmne default save kiya h ya hmnow mwthod bhi likh skte the
+select * from captions;
+create table captions2 (text varchar(20), created_at timestamp default current_timestamp, updated_at timestamp on update current_timestamp); 
+insert into captions2 (text, created_at) values ("hey", now());
+-- yha se text or createdat me present date time store hogi pr updatedat me kch nhi aayga update at me data tbhi aayga jb hm kch update krege abhi insert kiya h update nhi
+update captions2 set text = "hey2";
+-- yha se text me sbhi jgh hey2 aa jayga sath hi yha se updatedat me bhi present date and time aa jayga kuki ab hmne data update kiya h
+select * from captions2; 
+
+
+
+
+
+
+
+create table vj (id int, name varchar(20), status boolean, secname varchar(20),  check(reverse(secname)=name));
+insert into vj values (10, "saras", true, "saras");
+insert into vj values (10, "saras", true, "saras2");
+-- error
+drop table vj;
+create table vj (id int, name varchar(20), status boolean, secname varchar(20),  constraint sakila_vj_secname_check check (reverse(secname)=name));
+insert into vj values (10, "saras", true, "saras2");
+-- error yha constarint ka name hmne set kra h taki hme smj aaye error emj aane k liye us error(constraint) ko nya name diya
+create table price (selprice int, purprice int, house_id int, check(selprice<=purprice));
+-- yha jb selprice purprise se bda ho to data insert nhi hona chaiye
+use sakila;
+create table std2(sno int, sname varchar(20), sid int, constraint sakila_std_sid_fk  foreign key(sid) references std1(sid));
+create table std1(sid int primary key, hobby varchar(20));
+insert into std1 values (1, "cricket");
+insert into std1 values (2, "tennis");
+insert into std2 values (10, "vikas",1);
+insert into std2 values (11, "vikki",2);
+insert into std2 values (12, "golu",3);
+-- error yha data insert nhi hoga kuki sid foregin key h or std1 me sid me 1 or 2 hi add h to yha data match hoke sid me 1 or 2 hi add krega 3 ko nhi krega kuki sid 3 hmare std1 me nhi h 
+-- create table coustmer id name city country 
+-- country info = countryid contryname city 
+-- customer table se customercity and country ko foregin key banani h city or countryname se 
+-- create table customer1 (cid int, cname varchar(20), ccity varchar(20), ccontry varchar(20), foreign key (ccity) and (ccontry) references country1(ccity),(ccontry));
+-- create table country1 (contryid int, ccontry varchar(20) primary key, ccity varchar(20) primary key);
+-- drop table country1;
+-- alter command
+create table vk (id int);
+insert into vk value (10);
+select * from vk;
+alter table vk add column name varchar(20);
+-- yha se nya colom add ho gya uska name name h by default usme null store hota h
+desc vk;
+alter table vk add column fname varchar(20) default 0;
+select * from vk;
+-- yha fname null nhi aayga kuki hmne 0 set kra h
+alter table vk add column lname varchar(20) not null;
+-- yha lname me notnull set kra h to kch nhi aayga empty aayga blanckspace
+alter table vk add column nickname int not null;
+-- yha nickname bhi not null set kra h to ye 0 aayga jb hm null nhi set krte h to 0 milti h 
+alter table vk add column petname int ;
+-- yha petname ki value null milegi kuki bydefault null hoti h
+alter table vk add column nime int default 0;
+-- yha nime me 0 store ho jayga
+select * from vk;
+-- delete a column name 
+alter table vk drop nime;
+-- yha se nime vala column delete hoga
+-- rename the table
+rename table vk to golu;
+-- yha se table ka name golu ho jayga
+select * from vk;
+-- error kuki vk ka name ab golu ho chuka h
+select * from golu;
+-- no error
+alter table golu rename to vz;
+-- yha se golu se table ka name vz ho gya h
+select * from vz;
+-- no error
+alter table vz rename column petname to fullname;
+-- yha se colom ka name rename kr skte h
+alter table vz change nickname homename int;
+-- yha se hm column ka name or uska datatype dono ek sth change kr skte h yha ab nickanme ki jgh homename or uska datatype varchar se int hua hai
+desc vz;
+alter table vz modify fname int ;
+-- yha se fname ka datatype varchar se int ho gya hai
+desc vz;
+select * from vz;
+insert into vz values(10,"vikas",20,"jain",4,5);
+-- yha se data insert hoga
+select * from vz;
+insert into vz values(30,"vikas",2,"jain",4,5,5);
+update vz set fname = null;
+-- yha se vz table me jha jha fname h vha vha null set ho jayga chahe vha kch bhi data ho
+update vz set id = 20 where homename = 4;
+-- yha se jha jha homename = 4 h vha vha id = 20 set ho jaygi
+select * from vz;
+alter table vz add column un int;
+desc vz;
+insert into vz values (10,"vikas",20,"jain",30,40,1);
+insert into vz values (10,"vikas",20,"jain",30,40,2);
+insert into vz values (10,"vikas",20,"jain",30,40,3);
+create table hii(id int, name varchar(20));
+alter table hii add primary key(id);
+-- yha se id kon primary key bna diya h hii table me
+alter table hii drop primary key;
+-- yha se id ko bnai gyi primary key drop ho chuki h mtlb delete ho gyi hai
+desc hii;
+insert into hii values (1,"vikas");
+insert into hii values (2,"golu");
+alter table hii modify name varchar(20) default "fullname";
+-- yha se name me bu=t=ydefault value fullname hone k liye yha se condition add ki h jiska column name default or value fullname hogi
+desc hii;
+select * from hii;
+alter table hii add constraint hii_pk primary key(id);
+-- yha se id ko primary kry bna diya h ye contraint name deke bnane ka dusra trika hai
+alter table hii drop primary key;
+-- yha se bnai hui primary key drop ho jaygi
+alter table hii add constraint hii_uk unique(name);
+-- yha se name ko unique key bna diya hai
+alter table hii drop constraint hii_uk;
+-- yha se bnai hui unique key drop ho gyi h
+desc hii;
