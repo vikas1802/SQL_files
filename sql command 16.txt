@@ -1,0 +1,98 @@
+use sakila;
+select * from employees;
+use employees;
+select emp_no, first_name, last_name, birth_date, hire_date from employees where year(birth_date)>1959 and year(hire_date)<1989;
+select emp_no, first_name, last_name, birth_date, hire_date, max(hire_date) from employees where emp_no between 10001 and 10007 group by emp_no;
+create table test (id int, name varchar(20));
+insert into test values (1,"vikas");
+insert into test values (2,"vikki");
+insert into test values (3,"vijay");	
+create view testview as select name from test;
+select * from testview;
+-- testview me only name select kra isliye name hi aaya h
+insert into testview values (12,"fr");
+-- error kuki only name select kra h
+insert into testview values ("fr");
+-- no error
+-- agr view me changes krne h mtlb id bhi leni h to view hmare pas alerady h isliye replace use krege isse view hoga to replace ho jayga or nhi hoga to bn jayga
+create or replace view testview as select id, name from test;
+-- alter dvara bhi hm is trh change kr skte h yha id 2 se jyada vala data milega
+alter view testview as select name from test where id>2;
+show tables;
+-- yha se view dikh jayga
+-- ydi view htana h to
+drop view testview;
+-- yha se testview drop ho jayga
+use world;
+use sakila;
+select * from city;
+select * from country;
+create view cityfinder_v as 
+select country_id, country, city_id, city from country 
+inner join city using (country_id);
+--  city_finder_v me data insert nhi ho skta kuki subquery se data insert view me nhi hota hai
+select id, ifnull(id,0) from test;
+-- yha se jha jha id me null hoga vha vha 0 aa jayga
+alter table test add column salary int;
+-- test me salary vala colom add kiya 
+select * from test;
+insert into test values (4,"vj",4000);
+insert into test values (4,null,4000);
+insert into test values (null,null,4000);
+insert into test values (12,null,null);
+insert into test values (null, null, null);
+select * from test;
+select id, name, salary, coalesce(id, name, salary) from test;
+-- yha se vo data milega jo hm colom dege jinme se ek me bhi null hoga vo uski vo value return krega jo not null hoga
+-- tino null hone pr null hi return krega ye vo hi data leta h jisme km s k ek null to ho hi
+
+
+
+-- windows function
+use sakila;
+create table empp(id int primary key auto_increment, depat varchar(20), salary int);
+insert into empp (depat, salary)values("hr",200),("hr",300),("hr",100),("marketing",70),("martketing",50),("marketing",200),("marketing",400),("dsa",150),
+("dsa",120),("dsa",40),("dsa",90),("dsa",500);
+select avg (salary) from empp;
+alter table empp rename column depat to dept;
+select dept, avg(salary) from empp group by dept;
+-- isse sbhi colom k liye alg alg avg salary niklegi
+-- windows function as like a aggreegate functions:
+-- agreegate for every raw
+select id, dept, salary from empp;
+select id, dept, salary, avg(salary) from empp;
+-- error
+select id, dept, salary, avg(salary) over() from empp;
+-- over() window function use kiya yha se hr ek raw k liye avg salary result milega yha total ka avg milega
+select id, dept, salary, avg(salary) over() as avgsalary, max(salary) over() from empp;
+-- yha se hr ek raw ka avg salary or max salary milegi
+select id, dept, salary, avg(salary) over(order by salary) as avgsalary, max(salary) over() from empp;
+-- yha se salary sort hoke fr uska avg milega
+select id, dept, salary, avg(salary) over(partition by dept) as avgsalary, max(salary) over() from empp;
+-- yha se hr dsa or marketing particluar phle grp se set hogi uske bad apne apne grp k according avg milega 
+-- jese dsa ka total avg 180 h to hr dsa k sth 180 milega isi trh hr ka avg 200 milega to hr k sath hmesa 200 milega
+-- parition by me diya gya colom name ye decide krti h ki kis colom k aadhar pr avg nikalna h
+select id, dept, salary, sum(salary) over(order by salary) as avgsalary, max(salary) over() from empp;
+-- yha se phle salary me sort hoga uske bad piche ka ek judke data milta h sum ka
+select id, dept, salary, sum(salary) over(order by dept) as avgsalary, max(salary) over() from empp;
+-- yha se phle dept base pe data sort hoga uske bad dsa k grp ka data milega fr uske bad hr k grp ka sum dept k sum me add hoke milega
+select id, dept, salary, sum(salary) over(partition by dept) as avgsalary, max(salary) over() from empp;
+-- yha se piche ka sum judke nhi milega particular dept ek grp me sort hoke sbke liye grpwise result dega
+select id, dept, salary, sum(salary) over(partition by salary) as partitionsum, sum(salary) over(partition by dept order by salary) as rollingsum from empp;
+-- yha se phle dept base pr data sort hoga uske bad dept base pr salary sort hogi uske bad partisum me salary add hoke milegi pr same salary 2 bar ho to add hoke milegi jese 200 bar h ek b ar marketing or ek bar dsa me isliye 200 pr partition sum 400 milega dono jgh
+-- yha se dept or salary dono sort hone k bad rolling sum me grp wise data rooling me sum hoke milega jese hr ka sum dsa or marketing ka sum 
+-- mtlb partition sum common value ko ek sth sum krta h or unique value ko ek bar add krta hai or rolling sum piche vale sum add krke deta h 
+select id, dept, salary, avg(salary) over (partition by dept) as dept_avg, avg(salary) over() as company_avg from empp;
+-- yha se comapnyavg me hmesa 185 milega kuki hmne onlu=y over diya h usse pura colom ka avg niklega 
+-- dept avg me partition by dept diya h mtlb data dept me sort hoke fr alg alg grp ka avg dega
+select id, dept, salary, min(salary) over (partition by dept) as dept_min, min(salary) over() as company_min from empp;
+select id, dept, salary, rank() over() from empp;
+-- yha se sbko ek hi 1 rank milega
+select id, dept, salary, rank() over(order by salary) from empp;
+-- yha se sbko uniqye salary milega pr hr me 200 2 bar aata h isliye dono ki rank 8 aaygi uske bad rank 10 se shuru hogi kuki dusre 8 ko ye background mw 9 manta hai
+select id, dept, salary, rank() over(order by dept) from empp;
+-- yha se dept base pe rank milegi mtlb dsa total 5 h to pancho ko 1 milega uske bad hr ko 6 milega 
+select id, dept, salary, dense_rank() over(order by dept) from empp;
+-- yha se 5 dsa h to ye sbko 1 rank dega background me kch nhi dega USKE bad hr ko 2 rank dega fr marketing ko 3 dega 
+select id, dept, salary, rank() over(partition by dept order by salary) as ranks, dense_rank() over(partition by dept order by salary) as denserank from empp;
+-- yha se phle dept base pe data sort hogi uske bad salary pr sort hoga uske bad sbko alg alg rank milegi
