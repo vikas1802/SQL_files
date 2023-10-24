@@ -1,0 +1,52 @@
+-- view 
+-- view ek stored query hoti h jise hm table ki form me store krte h us query ko hm jb bhi chlate h to use ek data milta hai
+-- us data ko hm na to physically store kr skte h or na hi copy kr skte h only access kr skte h kuki view wk virtual table h 
+-- view 2 type ka hota h 1 simple view 2 complex view 
+-- simple view jisme koi clause, function, aggreegation , join use nhi hote only where use hota h 
+-- complex view jisme koi clause, function, aggreegation , join use hote h 
+-- view hm ku use krte h 
+-- 1 manage complexity mtlb bar bar query use krne ki jgh use store kiya ja skta h 
+-- reusability mtlb ek bae view likhne k bad use bar bar chla skte h 
+-- security mtlb particular colom pr view ki format me query chlana 
+-- backward compatibility mtlb jese bar bar data grow ho rha h vese bar bar query chlane ki need nhi h
+
+use sakila;
+select * from test;
+create table employee123(id int, name varchar(20), salary int);
+insert into employee123 values (10,"abc",100),(20,"def",200),(30,"new",300);
+select * from employee123;
+create view empview as select id, name from employee123;
+-- ydi hm kisi k sath salary nhi show krna chahe id or name hi krna chahe to is trh view bnate h 
+select * from empview;
+-- isse id or name hi show hoga
+insert into empview values(40,"japan");
+-- is trh hm view me data insert bhi kr skte h
+select * from empview;
+select * from employee123;
+-- insert kiya gya data original table me bhi milta h 
+-- view ko change bhi kr skte h jese hme vhi data chaiye jiski id = 30 ho
+alter view empview as select id, name from employee123 where id = 30;
+select * from empview;
+-- yha vhi data milega jiski id = 30 hogi
+-- hm alter ki jgh create or replace bhi likh skte h (create or replace view empview as select id, name from employee123 where id = 30;)
+-- isse ydi view bna hua h to use replace kr dega or bna nhi h to bna dega
+insert into empview values(40,"iraq");
+-- ye data bhi empview or original table dono me dal gya
+select * from empview;
+-- yha nhi show hoga kuki yha to id=30 k liye hi chlaya h isliye id=30 ka data hi show hoga
+select * from employee123;
+create table dept123(id int, name varchar(20));
+insert into dept123 values (10,"hr"),(20,"manager"),(100,"oops");
+select * from dept123;
+create view jjo as select employee123.id, dept123.name from employee123 inner join dept123 using (id);
+select * from jjo;
+-- yha se common id or unke dept name milege
+insert into jjo (id, dept123.name) values (60,"kilo");
+-- yha se error aaugi kuki ek bar me ek hi table me data insert ho skta h jyada me nhi
+ insert into jjo (id) values (60);
+ -- yha se data chl jayga kuki ek hi table me dala h 
+ select * from jjo;
+ -- yha se nhi milega kuki vo common me nhi h
+ select * from employee123;
+ -- yha 60 vala data mil jayga kuki vo isi table me add hua h
+ 
