@@ -1,0 +1,174 @@
+use sakila;
+drop table test;
+create table test (id int, name varchar(20));
+insert into test values(10,"hey"),(20,"abc"),(30,"egd");
+select * from test;
+-- yha se check krte h ki hmara data databse me permanent save ho gya h
+-- autocommit ek feature hota h jab hm database me koi bhi work kre to vo use permanent save krta h
+select @@autocommit;
+-- yha se 1 milega by default 1 hoti h 
+update  test set name = "tushar" where id = 10;
+select * from sakila.test;
+-- yha se hey ki jgh tushar aa gya h 
+select @@autocommit;
+-- yha se bhi autocommit ki value 1 milti h kuki data permanent hi save hota h 
+-- ydi hm autocommit ki value 1 se 0 set krde mtlb true se false krde to transaction save nhi hota h mtlb value change nhi hogi mtlb hey ki jgh tushar nhi aayga hey hi rhega
+set autocommit = 0;
+select @@autocommit;
+-- yha se 0 milega kuki hmne 0 set kri h
+update  test set name = "tush" where id = 10;
+-- yha se to tushar ki jgh tush aa jayga bt vo permanent save nhi hoga kuki autocommit ki value 0 h ise check krne k liye connection bnd krke vaps ydi test table check kre to data tushar hi milega na ki tush
+select * from sakila.test;
+-- ise autocommit ki jgh trasaction start or end krke bhi kr skte h jese niche kiya hua h
+set @@autocommit = 1;
+select @@autocommit;
+-- yha se autocommit ki value 1 ho gyi hai
+start transaction;
+update  test set name = "vikas" where id = 10;
+select * from sakila.test;
+-- yha se id = 10 pr vikas save ho gya hai pr ye permanent file me save nhi hue kukib hmne transaction start kiya use bnd nhi kiya direct close krke check kre to id=10 pr tushar hi milega
+select @@autocommit;
+-- yha se autocommit ki value bhi 1 milegi mtlb value 1 (true) hone pr bhi data save nhi hua kuki hmne transaction chlaya h bnd nh kiya
+-- mtlb start transaction ki vjh se autocommit ki value pr koi frk nhi pdta hai
+-- yadi japan se just piche ka data dekhna h to hm rollback krte h jisse purana data milta h mtlb data 1 step reverseback hoke milta h 
+rollback;
+select * from test;
+-- yha se tushar milega
+-- mtlb jab hm rollback operation perform krte h to transaction end ho jata h rollback use krne se current transaction bnd ho jata h
+-- ydi autocommit ki value 1 h to khud save krta h
+select @@autocommit; 
+-- 1 value milegi
+update  test set name = "vik" where id = 10;
+select * from test;
+-- yha se vik save ho gya hai
+rollback;
+select * from test;
+-- rollback krne se bhi abki bar vik hi mil rha h data pervious nhi mila kuki hmare autocommit ki value 1 h isliye transaction autometic fulfil ho jata h start transaction ki need nhi h
+start transaction;
+update  test set name = "golu" where id = 10;
+select * from test;
+-- yha se golu aa jayga per permanent nhi aayga
+rollback;
+select * from test;
+-- yha se data rollback hua mtlb golu ki jgh vik mila h 
+start transaction;
+update  test set name = "india" where id = 10;
+commit;
+-- yha commit krne se data permanent save ho gya ab rollback krne se koi frk nhi pdega hmesa id=10 pr india hi milega
+select * from test;
+rollback;
+select * from test;
+-- yha se india hi milega
+-- autocommit = 0 set kre ya start transaction kre dono same work krte h kuki dono permanent data save nhi krte h
+start transaction;
+update  test set name = "goa" where id = 10;
+select * from test;
+-- yha se id=10 pr goa aa jayga per permanent nhi aayga kuki transaction bnd mhi kiya hai
+create table xyz123(id int); 
+rollback;
+select * from test;
+-- mtlb yha se data rollback nhi hoga goa hi milega mtlb ddl statement sql me or mysql me autocommit statement hote h jo data ko permanent save krte h
+-- ddl chlane se jo bhi transaction chl rha h vo autometic end ho hata hai
+ -- dml task perform krne se transaction start hota h or ddl perform krne se end ho jata hai
+ select * from test;
+ select @@autocommit;
+ -- 1 milegi
+ start transaction;
+ update  test set name = "go" where id = 10;
+ insert into test values (50,"xyz");
+ select * from test;
+ -- yha se id=10 pr go aa gya or new entry bhi add ho gyi
+ rollback;
+  select * from test;
+  -- yha se data rollback bhi ho gya mtlb new entry or go dono nhi milte h
+  -- rollback se data reverse back hota h
+  -- commit se data permanent save hota h
+  -- ddl statement se data save hota h 
+  start transaction;
+ update  test set name = "op" where id = 10;
+ commit;
+ -- yha se data update hota permanently or transaction bnd ho jata
+ insert into test values (60,"xz");
+ -- yha autocommit ki value 1 hone se ye apne aap permanent save ho jata 
+ select * from test;
+ -- yha tk id=10 pr op or new entry add ho gyi h 
+ rollback;
+  select * from test;
+  -- yha se data rollback nhi hota kuki dono permanent save ho chuke h 
+drop table test;
+select * from test;
+-- yha error aaygi kuki hmne test table ko delete kiya h to ab exist nhi krti h
+rollback;
+select * from test;
+-- yha rollback se bhi nhi milegi kuki drop ek ddl statement h isliye permanent save hone or transaction end hone ki vjh se rollback perform nhi krega 
+use sakila;
+set @@autocommit=0;
+select @@autocommit;
+-- yha se 0 milega
+create table test (id int, name varchar(20));
+insert into test values(10,"hey"),(20,"abc"),(30,"egd");
+select * from test;
+commit;
+-- ab hmara data permanent save hua h kuki phle autocommit ki value 0 thi
+select * from test;
+ update  test set name = "gopal" where id = 10;
+ select * from test;
+ -- id=10 pr gopal aa gya pr permanent nhi aaya kuki autocommit ki value 0 hi h
+ -- yha commit krege to hi vo permanent save hoga 
+ commit;
+ 
+ select * from test;
+ set @@autocommit=1;
+ select @@autocommit;
+ -- yha se 1 milega
+  update  test set name = "kajal" where id = 10;
+  -- ye permanent save nhi hua h mtlb transaction start ho gya h
+  -- isi trh hm isme bar bar query chlake ek sath kai transaction start kr skte h or rollback krke ek sth hi end bhi kr skte h pr yadi particular kch transaction hi end krne ho to uske liye savepoint bnate h
+drop table test;
+create table test (id int, name varchar(20));
+insert into test values(10,"hey"),(20,"abc"),(30,"egd");
+select * from test;
+start transaction;
+ update  test set name = "tushar" where id = 10;
+ savepoint test_name_tushar; 
+  update  test set name = "newabc" where id = 20;
+  savepoint test_name_newabc;
+  rollback;
+  select * from test;
+  -- yha se data rollback hoke vaps phle vala data mila
+  -- ydi hm chahte h ki hmara data tushar tk hi rollback ho to hm is trh likhte h
+  start transaction;
+ update  test set name = "tushar" where id = 10;
+ savepoint test_name_tushar; 
+  update  test set name = "newabc" where id = 20;
+  savepoint test_name_newabc;
+  rollback to test_name_tushar;
+  select * from test;
+  -- yha se id=10 pr tushar milega pr id=20 ka data rollback ho jayga abc milega
+ drop table test;
+ create table test (id int, name varchar(20));
+insert into test values(10,"hey"),(20,"abc"),(30,"egd");
+select * from test;
+start transaction;
+ update  test set name = "tushar" where id = 10;
+ savepoint test_name_tushar; 
+  update  test set name = "newabc" where id = 20;
+  savepoint test_name_newabc;
+  insert into test values(60,"golu");
+  savepoint test_name_insert;
+  rollback to test_name_tushar;
+  select * from test;
+  -- yha se 60 vali value htegi or abc hi rhega id=20 pr 
+   rollback to test_name_newabc;
+  -- ab ydi hm vaps rollback tushar ki jgh newabc tk chlaye to ye error dega kuki phle tushar tk rollback chlake sari details delete krdi thi
+  
+  
+-- is trh transaction ko 3 trh se bnd kr skte h 1 rollback 2 commit 3 ddl statement
+-- ydi transaction chl rha h use permanent save krna h to commit krte hai
+-- what is difference between schema and table
+-- ddl statement chlane se value autocommit ho jati h when we want to start the transaction we use dml statements
+-- ddl task current transaction me chlane pr vo transaction autosave(autocommit) hoke khtm ho jayga
+-- ydi dml chlate h to transaction chlta rhta h
+-- ddl statement se commit or rollback donno nhi ho skte chache table drop hi  ku na ho
+-- ydi delete(dml) chlaye to data rollback ho skta hai
+-- a database transaction is a logic unit of work which consist of many operation tranaction take our data from one consistent state to another
