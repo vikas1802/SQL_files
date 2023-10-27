@@ -1,0 +1,35 @@
+-- DCL statement that is called user management system
+select * from mysql.user where user='root';
+-- yha se ye privileegres retrurn krta h ki hme kis kiska access mila hua h
+select * from mysql.user;
+-- yha se jo jo user bne hue h vo milege
+create user 'golu' identified by 'password';
+-- yha se golu name se user bn jayga
+select * from mysql.user;
+-- yha golu name se user milega
+-- yha host me percentege milta h mtlb hmne koi bhi ip address nhi diya mtlb ispe koi bhi user khi s bhi access ho skta h
+select current_user();
+-- yha currene user (root@localhost) milega
+-- ydi nya connection bnake chalayge or select current_user(); query ko check kre to golu milta h 
+-- vha select * from sakila.test krege to error aaygi kuki golu user me koi table nhi h iske liye previleeges nhi h 
+-- previllegeres check krne k liye ye query chlate h 
+select * from mysql.user where user = 'golu';
+-- yha se select_priv me N milta h mtlb vha table exist nhi h or database bhi nhi h
+select * from mysql.user where user = 'root';
+-- yhi kam jab root k liye krte h to select_priv me Y milta h mtlb vha table or database dono h kuki vo current user me h 
+-- ydi yha golu user ko sare privileges dena h to grant query chlate h jo niche h 
+grant all privileges on sakila.test to 'golu';
+-- yha se sare golu me aa jayge
+-- ab ydi nye connection me select * from sakila.test query chlayge to test table ka data show ho jayga
+-- ab hm yha se sakila ki test table me kch bhi operation kr skte h jese drop delete insert select etc pr sakila database ki dusri table me nhi kr skte
+-- kuki hme permission only test k liye mili h
+-- ager hme ye dekhna h ki golu user k pas kis kiski permision h to ye query likhege
+show grants for 'golu';
+-- yha se
+--  GRANT USAGE ON *.* TO `golu`@`%`
+-- GRANT ALL PRIVILEGES ON `sakila`.`test` TO `golu`@`%` ye data milega mtlb hme golu user ki sari or sakila ki test table ki permision h
+-- agr me nye connection me hi show grants for 'root'; chlau to error dega kuki hmare pas golu k alava koi or user k privileges dekhne ki prmsn nhi h
+-- agr isi connection me root user ki privileges dekhni h to :
+show grants for 'root'@'localhost';
+-- yha se root user ki sari privileges mil jaygi
+-- learn about bitmap indexing 
