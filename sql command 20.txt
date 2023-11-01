@@ -1,0 +1,100 @@
+create user bob12 identified by 'bob';
+-- yha bob12 user bnaya h uska password bob h
+select * from mysql.user;
+-- yha se sare user ki information milti h
+select current_user(), user();
+-- isse current user jispe hm work kr rhe h vo or hmara user dono milte h
+drop user bob12;
+-- yha se bob12 user delete ho gya h
+create user 'say'@'192.16.10.%' identified by 'password';
+-- yha se ek user say bnaya h uska password hmne password rkha or uska ip address 192.16.10.% ye hai
+create user 'say' identified by 'password';
+-- yha se ek user say bnaya h uska password hmne password rkha or uska ip address nhi hai to  ye bydefault % lega
+select * from mysql.user;
+-- yha se sare user ki information check ki hai
+drop user 'say'@'192.16.10.%';
+-- yha se 'say'@'192.16.10.%' user delete ho gya h is trh delete krne k liye me pura user name likhna pdta h
+create user 'bob' identified by 'bob';
+-- yha ek bob user bnaya uska password bob rkha hai
+-- yha se nya connection bna liya h ab hm vha work krege to yha se ab bobuser connection k bob username ki files dikegi 
+-- show databases;
+-- -- yha s bobuser k database show hoge
+-- create database xyz;
+-- -- ya se access denied ki error aati h mtlb hme iski permision nhi hai mtlb hmne bobuser ko privilegers nhi diye h 
+-- -- priviligers ka mtlb h accessability of your object or object hmare schema table view index database aadi ho skte h 
+-- set password = '123';
+-- -- yha se bobuser apna pswrd 123 set kr leta h ab newpasss iska pswrd nhi h 
+-- yha tk ka work bobuser file ka h 
+
+
+
+alter user 'bob' identified by 'newpass';
+-- yha se bobuser ka paswrd password ki jgh newpass kr diya h 
+alter user 'bob' account lock;
+-- yha se bob ka account lock ho gya h ye current me to chlega pr ydi connection close krke vaps chlaye to nhi chlta h 
+-- ise vaps unlock bhi kr skte h uske liye ye command chlani pdegi
+alter user 'bob' account unlock;
+-- yha se vo unlock ho gya hai
+rename user 'bob' to 'robert';
+-- yha se bob se robert ho gya h hmare user ka name
+rename user 'robert' to 'bob';
+-- vaps yha se robert se bob ho gya h hmare user ka name
+-- privileges hmare pas 4 type ki hoti h
+-- 1. global privileges
+-- ek sath sare k liye apply hona  ye privileges 2 jgh store hoti h ek to mysql.user file me or dusra mysql.global.grants file me 
+-- ise dianamic privileges bhi bolte h mene koi user bnaya use sari privilegs dedi to vo sbpe hr ek database pr apply kr skta h
+-- 2. database privileges
+-- ye paticular database pr apply hoti h specific database k liye hoti h esi privilegs jo keval ek object ko mila h 
+-- ye privileges mysql.db table me save hoti h isi ki vjh s hm ddl ya dml chla pate h 
+-- 3. object privileges
+-- ek paricular table(object) ki bat krna specific table k liye privileges hoti h 
+-- 4. colom privilegs
+-- ek paricular colom(object) ki bat krna specific colom k liye privileges hoti h 
+-- ye mysql.columns file me save hoti h
+show privileges;
+-- duniya ki sari privilgese milegi jo bni hui h 
+grant select on sakila.* to 'bob';
+-- yha se hmne only bob user ko select ki permissiion di h or sakila ki sari table k liye di h 
+grant select on *.* to 'bob';
+-- isse sare databse ki sari table k liye prmsn di h 
+-- ab ydi ek prmsn ek sth 2 user ko deni h to is trh dete h 
+grant select on sakila.* to 'golu','say';
+-- yha se golu or say user ko sakila database ki sari table ka select ka access mila h 
+grant all on sakila.* to 'golu';
+-- grant k aage all lgane se sari prmsn milti h select insert etc hr trh ki milti h 
+-- grant command basically operation perform krta h jiski jiski hmare pas prmsn hoti h grant hmare database me ek table hoti h jisme ye sare changes hote h
+use sakila;
+create table t6 (id int, name varchar(20));
+insert into t6 values (10,"chinu");
+grant select (id), insert (name) on sakila.t6 to 'bob';
+-- yha se sakila database ki t6 table me id me select or name me insert kr ske or uski prmsn bob user ko de to ye code likhege
+ show grants for 'bob';
+ -- yha se bob ko jo jo prmsn mili hui h vo show 
+ grant select on *.* to 'bob';
+-- isse sare databse ki sari table k liye prmsn di h
+-- revoke se hm jo prmsn dete h use vaps le skte h mtlb ye grant ka just opposite hota h 
+-- revoke tbhi perform hota h jab koi information grant ki hui ho 
+revoke select on sakila.* from bob;
+-- yha se sakila database ki sari table ka data revoke ho gya h mtlb hm ab ek bhi table access nhi kr skte h bobuser me 
+ show grants for 'bob';
+ -- yha se dekhege to sakila database ki prmsn vali line ht gyi h 
+ revoke all privileges, grant option from bob;
+ -- yha se sari privileges ht jati h bs bydefault ek usages vali rhti h 
+  show grants for 'bob';
+  -- yha se vo bydefault usage vali line milti h 
+  create table bob_pri (id int primary key, data text);
+  -- ek table bnai hai 
+  grant select on bob_pri.* to 'bob';
+  -- uska select access bobuser ko diya h 
+   -- yadi test name ka new user bnaye to 
+create user test identified by 'test';
+-- yha nye user bn chuka h pr bob_pri table ka data ka access bobuser k pas h or yhi access hme test user ko dena h pr bob se dena h to bobuser me line 18 se 
+grant select on sakila.bob_pri to 'bob' with grant option;
+-- yha with grant k sath bob k pas prmsn aa gyi or bob se test ko ye prmsn de skta h 
+grant select on bob_pri.* to 'test';
+-- ab ye prmsn test ko bhi mil gyi h 
+show grants for test;
+show grants for bob;
+revoke grant option on bob_pri from 'bob';
+-- yha se with grant optn vali line ht jaygi pr test se nhi htega only bob se htega 
+-- bobuser database (connection) ka data yha aata jo abhi open nhi hua h 
