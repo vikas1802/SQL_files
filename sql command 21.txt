@@ -1,0 +1,80 @@
+-- Indexing = ye ek esa feature h jo hmari query k execution ko fast kr deta h 
+-- mysql me indexing 2 trh ki hoti h = 1. clustred index
+-- 									2. non clustred index/secondray index
+-- jb bhi kisi colom ko primary key ya unique constraint dete h to vo automatic indexing start kr deta h ise clustred index khte h 
+-- jb user koi index bnata h to use non clustred index khte h 
+-- composite index = index is the one which is created on combination of two or more colom ise compound index bhi khte h 
+
+ 
+use test;
+create table regex (id int primary key auto_increment, name varchar(20), salary int);
+-- 
+desc regex;
+show indexes from regex;
+-- yha se indexing milti h jisme primary key cardinality visible sb milte h 
+-- cardinality ka mtlb h uniqueness ki hmari table me kitni unique values h 
+insert into regex values (1,"golu",10),(2,"aman", 20);
+-- yha id primary key h isliye bydefault index bn jayga 
+select * from regex;
+create index regex_jp_salary on regex(name);
+-- yha hmne index bnaya h name colom pr or index ka name hmne regex_jp_salary diya h ise non clustred index khte h 
+show indexes from regex;
+-- yha se cardinality 3 aaygi kuki hmare pas name to 4 h pr golu 2 bar aaya h isliye 3 hi rhege 
+insert into regex values (3,"golu",30);
+show indexes from regex; 
+-- yha se fir 2 hi cardionality aaygi kuki indexing ek bar create hoti h or golu name 2 bar aaya h or aman ek bar aaya h isliye dono ki milake 2 milegi
+insert into regex values (4,"go",40);
+show indexes from regex;
+-- yha se alg value insert krke dekha to bhi
+-- yha se bhi fir 2 hi cardionality aaygi kuki indexing ek bar create hoti h or kch bhi update delete insert krna h to new indexing create krni pdegi kuki vo cardinality ek bar save krne k bad change nhi krta h 
+select * from regex where name="golu";
+-- yha se 2 colom milege kuki 2 jgh golu h isliye ye 2 rows return krega ise composite index khte h 
+ explain select * from regex where name="aman";
+ -- yha se mysql engine dvara execution plan show hota h ki usne kitne time me query execute ki h 
+ -- yha se select type simple mila mtlb hmari quesry jo execute hui vo simple h 
+ -- possible keys ka mtlb ye btana ki kon konsi query process h skti h yha indexing name milege
+ -- yha rows 1 aayga mtlb usko aman dekhne k liye 1 rows search krni pdegi
+  explain select * from regex where name="golu";
+  -- yha rows 2 aaygi mtlb golu k liye ise 2 rows search krni pdegi 
+   drop index regex_jp_salary on regex;
+   -- yha se indexing hmne drop krdi h 
+   show indexes from regex;
+   -- yha se only primary key vala index milega
+   explain select * from regex where name="golu";
+   -- yha se ab rows 4 milega kuki sari indexing hmne drop krdi h hmare pas ab indexing nhi h isliye ye charo colom pr search krega ya jitne colom ho us pr search krta 
+   explain select * from regex where id=2;
+   -- yha se rows 1 hi milegi kuki id hmne primary kry bnai h isliye ye only 1 step hi search krega kuki isko yad h ki kinso id pr kya data store h isliye 4 nhi milega
+   -- # prefix index
+   -- jha bhi hm index bnate h use hm unique row number khte h uske sath sath hmara data bhi store hota h 
+   -- mana hmne address ko index bna diya ab index ka address bhut bda h jese city pincode state name etc mana hr ek address 20 byte consume kr rha h 
+   -- to hme jese 20 byte store krne h to hmari jo frst unique value h uske liye 20 byte store krne hoge ese hi scnd unique value k liye 20 krne hoge
+   -- isse performance issue aata h kuki itne bde data ko acces krne me bhut time lgta h 
+   -- agr hm  nhi chahte ki pura data store nhi ho iske liye hm prefix index use lete h 
+   -- isme hm chote number ya chote data ko index k sath store krte h 
+   create index regex_name on regex(name(2));
+   -- yha se hmne regex_name index bnaya h vo bhi name colom k 2 digit tk 
+   show indexes from regex;
+   -- yha se cardinality 2 hi aaygi kuki hmare pas 2 hi uniques values h
+ explain select * from regex where name  = "go%";
+ -- yha se 3 rows milegi kuki go or uske aage k words search krne k liye vo 3 tk search krega 
+explain select * from regex where name  = "golu";
+-- yha se 3 rows milegi kuki golu ko search krne k liye vo 3 tk search krega 
+explain select * from regex where name  = "aman";
+-- yha se 3 rows milegi kuki aman ko search krne k liye vo 1 tk search krega
+select left(name,2) from regex;
+-- yha se sbhi data k left se 2 char nikal k dega 
+select distinct left(name,2) from regex;
+-- yha se only distinct milegi vo bhi left k 2 char k base pr
+select count( distinct( left(name,2) ) ) from regex;
+-- yha se distinct value count hoke milegi
+create index regex_c on regex(name, salary);
+-- yha regex_c name se ek index bnaya h 
+show indexes from regex;
+-- yha se regex_c k name se 2 index milege jisme name ki cardinality 3 or ssalary ki 4 milegi
+explain select * from regex where salary =20;
+-- yha se rows 4 milegi kuki only salary k liye koi index nhi h 
+explain select * from regex where name="golu" and salary =20;
+-- yha se rows 1 milega kuki name or salary dono k liye index regex_c bnaya h 
+-- yha se ydi only name pr chlate to indexing chl jati kuki ye only frst colom pr chl skti h frst k bina piche vali pr nhi chl skti h 
+explain select * from regex where name="golu" or salary =20;
+-- or operator lgane se vo rows 4 hhi return krega kuki vo sbke upr check krta h 
